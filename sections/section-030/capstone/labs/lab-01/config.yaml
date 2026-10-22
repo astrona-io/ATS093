@@ -1,0 +1,63 @@
+# Harden The Keycloak Edge Capstone
+# Astrona graded lab. Schema: internal/config.LabConfig.
+
+metadata:
+  name: "ats-093-capstone-030"
+  docs:
+    guide: "solution.md"
+    solution: "solution.md"
+    question: "question.md"
+    examQuestion: "question.md"
+    prerequisites: "prerequisites.md"
+
+bootstrap:
+  init:
+    - name: "install-operator"
+      description: "Installs the Keycloak Operator 26.8.1, PostgreSQL and the tester pod in the namespace keycloak"
+      type: "file"
+      source: "bootstrap/01-install-operator.sh"
+    - name: "ats-093-capstone-030-setup"
+      description: "Starts Keycloak with its internal hostname behind an nginx that forwards everything, with no brute force detection"
+      type: "file"
+      source: "bootstrap/02-seed-state.sh"
+
+testing:
+  init:
+    - name: "wait-for-keycloak"
+      description: "Waits for the operator and PostgreSQL before the reference solution runs"
+      type: "file"
+      source: "testing/wait-for-keycloak.sh"
+    - name: "reference-solution"
+      description: "The remediation a correct learner performs; used by `astrona test`"
+      type: "file"
+      source: "solution/apply.sh"
+
+validation:
+  scripts:
+    - name: "validate-issuer-through-proxy"
+      description: "Confirms the discovery document through nginx names the public HTTPS issuer"
+      type: "file"
+      source: "validation/validate-issuer-through-proxy.sh"
+    - name: "validate-proxy-headers"
+      description: "Confirms Keycloak reads X-Forwarded headers and nginx sends them"
+      type: "file"
+      source: "validation/validate-proxy-headers.sh"
+    - name: "validate-private-paths"
+      description: "Confirms the administration console, the master realm and the management endpoints are not reachable through nginx"
+      type: "file"
+      source: "validation/validate-private-paths.sh"
+    - name: "validate-brute-force-settings"
+      description: "Confirms brute force detection is on with a temporary lockout after five failures"
+      type: "file"
+      source: "validation/validate-brute-force-settings.sh"
+    - name: "validate-lockout"
+      description: "Sends six wrong passwords for bob and confirms Keycloak locks him out"
+      type: "file"
+      source: "validation/validate-lockout.sh"
+    - name: "validate-rate-limit"
+      description: "Sends a burst to the token endpoint through nginx and confirms nginx answers 429"
+      type: "file"
+      source: "validation/validate-rate-limit.sh"
+
+teardown:
+  keepCluster: false

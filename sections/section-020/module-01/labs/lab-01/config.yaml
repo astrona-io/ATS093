@@ -1,0 +1,51 @@
+# Join Two Keycloak Instances Into One Cluster Lab
+# Astrona graded lab. Schema: internal/config.LabConfig.
+
+metadata:
+  name: "ats-093-lab-020-01"
+  docs:
+    guide: "solution.md"
+    solution: "solution.md"
+    question: "question.md"
+    examQuestion: "question.md"
+    prerequisites: "prerequisites.md"
+
+bootstrap:
+  init:
+    - name: "install-operator"
+      description: "Installs the Keycloak Operator 26.8.1, PostgreSQL and the tester pod in the namespace keycloak"
+      type: "file"
+      source: "bootstrap/01-install-operator.sh"
+    - name: "ats-093-lab-020-01-setup"
+      description: "Applies a Keycloak resource with two instances that do not form one cluster, and imports the realm inventory"
+      type: "file"
+      source: "bootstrap/02-seed-state.sh"
+
+testing:
+  init:
+    - name: "wait-for-keycloak"
+      description: "Waits for the operator and PostgreSQL before the reference solution runs"
+      type: "file"
+      source: "testing/wait-for-keycloak.sh"
+    - name: "reference-solution"
+      description: "The remediation a correct learner performs; used by `astrona test`"
+      type: "file"
+      source: "solution/apply.sh"
+
+validation:
+  scripts:
+    - name: "validate-two-ready-instances"
+      description: "Confirms the Keycloak resource is Ready with two instances and two ready pods"
+      type: "file"
+      source: "validation/validate-two-ready-instances.sh"
+    - name: "validate-no-local-cache"
+      description: "Confirms the cache is not set to local and the operator's network policy is still on"
+      type: "file"
+      source: "validation/validate-no-local-cache.sh"
+    - name: "validate-cluster-size"
+      description: "Confirms vendor_cluster_size is 2 on both Keycloak pods"
+      type: "file"
+      source: "validation/validate-cluster-size.sh"
+
+teardown:
+  keepCluster: false

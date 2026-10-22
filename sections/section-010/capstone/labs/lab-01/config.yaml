@@ -1,0 +1,55 @@
+# Deploy Keycloak And Its Realm With The Operator Capstone
+# Astrona graded lab. Schema: internal/config.LabConfig.
+
+metadata:
+  name: "ats-093-capstone-010"
+  docs:
+    guide: "solution.md"
+    solution: "solution.md"
+    question: "question.md"
+    examQuestion: "question.md"
+    prerequisites: "prerequisites.md"
+
+bootstrap:
+  init:
+    - name: "install-operator"
+      description: "Installs the Keycloak Operator 26.8.1, PostgreSQL and the tester pod in the namespace keycloak"
+      type: "file"
+      source: "bootstrap/01-install-operator.sh"
+    - name: "ats-093-capstone-010-setup"
+      description: "Leaves the namespace with the operator, PostgreSQL and the Secrets, and no Keycloak resource"
+      type: "file"
+      source: "bootstrap/02-seed-state.sh"
+
+testing:
+  init:
+    - name: "wait-for-keycloak"
+      description: "Waits for the operator and PostgreSQL before the reference solution runs"
+      type: "file"
+      source: "testing/wait-for-keycloak.sh"
+    - name: "reference-solution"
+      description: "The remediation a correct learner performs; used by `astrona test`"
+      type: "file"
+      source: "solution/apply.sh"
+
+validation:
+  scripts:
+    - name: "validate-keycloak-ready"
+      description: "Confirms a Keycloak resource named keycloak is Ready"
+      type: "file"
+      source: "validation/validate-keycloak-ready.sh"
+    - name: "validate-keycloak-spec"
+      description: "Confirms the database, hostname, ingress and resources settings"
+      type: "file"
+      source: "validation/validate-keycloak-spec.sh"
+    - name: "validate-realm-import-done"
+      description: "Confirms a KeycloakRealmImport named inventory finished without errors"
+      type: "file"
+      source: "validation/validate-realm-import-done.sh"
+    - name: "validate-no-literal-password"
+      description: "Confirms alice's password comes from a placeholder that reads inventory-secrets"
+      type: "file"
+      source: "validation/validate-no-literal-password.sh"
+
+teardown:
+  keepCluster: false

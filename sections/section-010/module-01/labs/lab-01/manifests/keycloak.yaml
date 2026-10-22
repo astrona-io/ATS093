@@ -1,0 +1,37 @@
+# The Keycloak resource this lab starts from. It is valid, the API server
+# accepts it, and it never becomes Ready: two of its database settings are
+# wrong. Finding and fixing them is the task.
+apiVersion: k8s.keycloak.org/v2beta1
+kind: Keycloak
+metadata:
+  name: keycloak
+  namespace: keycloak
+spec:
+  instances: 1
+  db:
+    vendor: postgres
+    host: postgresql
+    database: keycloak
+    usernameSecret:
+      name: keycloak-db
+      key: username
+    passwordSecret:
+      name: keycloak-db
+      key: pass
+  http:
+    httpEnabled: true
+  hostname:
+    hostname: http://keycloak-service:8080
+  ingress:
+    enabled: false
+  additionalOptions:
+    - name: health-enabled
+      value: "true"
+    - name: metrics-enabled
+      value: "true"
+  resources:
+    requests:
+      memory: 768Mi
+      cpu: 250m
+    limits:
+      memory: 1536Mi

@@ -1,0 +1,350 @@
+# Course manifest for ATS093 - Production Operations, Security & Kubernetes (Keycloak).
+#
+# One entry per section under `modules:`. Each section lists, in order: its
+# README, then for each module the landing page (course.md), its parts
+# (course-0N-*.md), and right after the part a lab tests, the lab's
+# question.md reading and the `type: lab` entry. The module's summary page
+# comes last. The section capstone closes the section. Playgrounds are not
+# listed: the landing page's playground marker shows them. solution.md is
+# never listed.
+#
+# Every `path:` is relative to this file.
+
+training:
+  id: ATS093
+  title: "Keycloak: Production Operations, Security & Kubernetes"
+  maturity: draft
+  description: >
+    Training material covering the Production Operations, Security &
+    Kubernetes domain of the Keycloak training path: the Keycloak Operator and
+    its Keycloak and KeycloakRealmImport resources, PostgreSQL and Infinispan
+    clustering, TLS termination at a reverse proxy, what to expose, brute force
+    detection and rate limiting, database backup and restore, and upgrades
+    with the operator's update strategies. Each module pairs a layered reader
+    with an ungraded hands-on playground and graded practice labs. Each
+    section closes with an integration capstone.
+    Written for the Keycloak Operator and Keycloak 26.8.1.
+
+  certification:
+    name: Keycloak
+    code: KEYCLOAK
+    provider: Astrona
+    domain: Production Operations, Security & Kubernetes
+    weight: 15
+
+modules:
+
+  - id: module-intro
+    title: "Introduction"
+    description: >
+      Start here. What this course trains you to do, how it is laid out, how
+      to get your machine ready with the astrona command-line tool, how the
+      content is written and checked, who maintains it, and how to report a
+      mistake.
+
+    content:
+      - type: reading
+        title: Introduction
+        path: sections/intro/README.md
+      - type: reading
+        title: "Welcome To The Course"
+        path: sections/intro/course-01-welcome.md
+      - type: reading
+        title: "Get Your Machine Ready"
+        path: sections/intro/course-02-get-your-machine-ready.md
+      - type: reading
+        title: "How This Course Is Made"
+        path: sections/intro/course-03-how-this-course-is-made.md
+
+  - id: module-010
+    title: "Running Keycloak With The Keycloak Operator"
+    description: >
+      What the Keycloak Operator installs and manages, the Keycloak custom
+      resource and its status conditions, the initial admin Secret, and
+      creating realms with KeycloakRealmImport.
+
+    content:
+      - type: reading
+        title: Section Overview
+        path: sections/section-010/README.md
+
+      - type: reading
+        title: "Deploy Keycloak With The Operator"
+        path: sections/section-010/module-01/course.md
+      - type: reading
+        title: "What The Keycloak Operator Manages"
+        path: sections/section-010/module-01/course-01-what-the-operator-manages.md
+      - type: reading
+        title: "The Keycloak Custom Resource"
+        path: sections/section-010/module-01/course-02-the-keycloak-custom-resource.md
+      - type: reading
+        title: Question
+        path: sections/section-010/module-01/labs/lab-01/question.md
+      - type: lab
+        title: "Fix A Keycloak Resource That Never Becomes Ready Lab"
+        path: sections/section-010/module-01/labs/lab-01
+        difficulty: intermediate
+        estimated_duration: 20m
+        topic: operator
+        task_kind: troubleshooting
+        tags: [keycloak-operator, keycloak-cr, status-conditions, kubernetes-secret, db-options, statefulset]
+        learning_goals:
+          - Read why a Keycloak resource is not Ready from its status conditions, the StatefulSet events and the pod log
+          - Fix the database settings in the Keycloak resource without typing the password into it
+          - Prove the fix with a Ready resource and a discovery document from the tester pod
+        resources:
+          - name: "Basic Keycloak deployment"
+            url: https://www.keycloak.org/operator/basic-deployment
+          - name: "Advanced configuration"
+            url: https://www.keycloak.org/operator/advanced-configuration
+      - type: reading
+        title: "Importing Realms With KeycloakRealmImport"
+        path: sections/section-010/module-01/course-03-importing-realms.md
+      - type: reading
+        title: Summary
+        path: sections/section-010/module-01/course-04-summary.md
+
+      - type: reading
+        title: Question
+        path: sections/section-010/capstone/labs/lab-01/question.md
+      - type: lab
+        title: "Deploy Keycloak And Its Realm With The Operator Capstone"
+        path: sections/section-010/capstone/labs/lab-01
+        difficulty: intermediate
+        estimated_duration: 35m
+        topic: realm-import
+        task_kind: build
+        tags: [keycloak-cr, realm-import, placeholders, initial-admin-secret, resources, status-conditions]
+        learning_goals:
+          - Write a Keycloak resource that runs on PostgreSQL with the database credentials from a Secret
+          - Import a realm with a KeycloakRealmImport whose user password comes from a Secret placeholder
+          - Prove the result with Ready and Done conditions and a token for the imported user
+        resources:
+          - name: "Basic Keycloak deployment"
+            url: https://www.keycloak.org/operator/basic-deployment
+          - name: "Automating a realm import"
+            url: https://www.keycloak.org/operator/realm-import
+
+  - id: module-020
+    title: "Databases And Clustering"
+    description: >
+      Why the database holds everything that matters, the Infinispan caches,
+      how instances find each other with jdbc-ping, and how to prove that two
+      instances form one cluster.
+
+    content:
+      - type: reading
+        title: Section Overview
+        path: sections/section-020/README.md
+
+      - type: reading
+        title: "Run Keycloak As A Cluster"
+        path: sections/section-020/module-01/course.md
+      - type: reading
+        title: "The Database Is The Source Of Truth"
+        path: sections/section-020/module-01/course-01-the-database-is-the-source-of-truth.md
+      - type: reading
+        title: "Infinispan Caches And Cluster Discovery"
+        path: sections/section-020/module-01/course-02-infinispan-caches-and-discovery.md
+      - type: reading
+        title: Question
+        path: sections/section-020/module-01/labs/lab-01/question.md
+      - type: lab
+        title: "Join Two Keycloak Instances Into One Cluster Lab"
+        path: sections/section-020/module-01/labs/lab-01
+        difficulty: intermediate
+        estimated_duration: 25m
+        topic: clustering
+        task_kind: troubleshooting
+        tags: [infinispan, jdbc-ping, instances, cluster-size, metrics, persistent-sessions]
+        learning_goals:
+          - Find why two Keycloak instances do not form one cluster from the configuration and the cluster size metric
+          - Remove the setting that keeps each instance alone without lowering the instance count
+          - Prove the fix with a cluster size of two on each pod and a token that one pod issued and the other accepts
+        resources:
+          - name: "Configuring distributed caches"
+            url: https://www.keycloak.org/server/caching
+          - name: "Advanced configuration"
+            url: https://www.keycloak.org/operator/advanced-configuration
+      - type: reading
+        title: Summary
+        path: sections/section-020/module-01/course-03-summary.md
+
+      - type: reading
+        title: Question
+        path: sections/section-020/capstone/labs/lab-01/question.md
+      - type: lab
+        title: "Keep Sessions Alive Through A Pod Restart Capstone"
+        path: sections/section-020/capstone/labs/lab-01
+        difficulty: advanced
+        estimated_duration: 35m
+        topic: clustering
+        task_kind: troubleshooting
+        tags: [instances, infinispan, cluster-size, resources, persistent-sessions, statefulset]
+        learning_goals:
+          - Find several independent reasons a Keycloak deployment cannot survive the loss of one pod
+          - Run two clustered instances with enough memory for each
+          - Prove that a user session outlives a deleted pod
+        resources:
+          - name: "Configuring distributed caches"
+            url: https://www.keycloak.org/server/caching
+          - name: "High availability overview"
+            url: https://www.keycloak.org/high-availability/introduction
+
+  - id: module-030
+    title: "Edge Security"
+    description: >
+      TLS termination modes and proxy headers, the paths a reverse proxy
+      should and should not expose, brute force detection in a realm, and rate
+      limiting at the proxy.
+
+    content:
+      - type: reading
+        title: Section Overview
+        path: sections/section-030/README.md
+
+      - type: reading
+        title: "Put Keycloak Behind A Reverse Proxy"
+        path: sections/section-030/module-01/course.md
+      - type: reading
+        title: "TLS Termination Modes And Proxy Headers"
+        path: sections/section-030/module-01/course-01-tls-termination-and-proxy-headers.md
+      - type: reading
+        title: "What To Expose Through The Proxy"
+        path: sections/section-030/module-01/course-02-what-to-expose.md
+      - type: reading
+        title: Question
+        path: sections/section-030/module-01/labs/lab-01/question.md
+      - type: lab
+        title: "Expose Keycloak Through An Edge Proxy Lab"
+        path: sections/section-030/module-01/labs/lab-01
+        difficulty: intermediate
+        estimated_duration: 25m
+        topic: edge-security
+        task_kind: troubleshooting
+        tags: [reverse-proxy, edge-termination, proxy-headers, hostname, exposed-paths, nginx]
+        learning_goals:
+          - Configure the Keycloak resource and nginx so tokens carry the public HTTPS issuer
+          - Keep the administration console and the master realm off the public proxy
+          - Prove the result with the discovery document and a blocked administration path through the proxy
+        resources:
+          - name: "Configuring a reverse proxy"
+            url: https://www.keycloak.org/server/reverseproxy
+          - name: "Configuring the hostname"
+            url: https://www.keycloak.org/server/hostname
+      - type: reading
+        title: "Brute Force Detection And Rate Limiting"
+        path: sections/section-030/module-01/course-03-brute-force-and-rate-limiting.md
+      - type: reading
+        title: Question
+        path: sections/section-030/module-01/labs/lab-02/question.md
+      - type: lab
+        title: "Stop Password Guessing Lab"
+        path: sections/section-030/module-01/labs/lab-02
+        difficulty: intermediate
+        estimated_duration: 20m
+        topic: brute-force
+        task_kind: build
+        tags: [brute-force, rate-limiting, nginx, reverse-proxy]
+        learning_goals:
+          - Turn on brute force detection with a temporary lockout after five failures
+          - Limit the request rate to the token endpoint at the proxy with nginx limit_req
+          - Prove both with a locked test user and a 429 response to a burst of requests
+        resources:
+          - name: "Server Administration Guide: brute force detection"
+            url: https://www.keycloak.org/docs/latest/server_admin/index.html#password-guess-brute-force-attacks
+          - name: "Configuring a reverse proxy"
+            url: https://www.keycloak.org/server/reverseproxy
+      - type: reading
+        title: Summary
+        path: sections/section-030/module-01/course-04-summary.md
+
+      - type: reading
+        title: Question
+        path: sections/section-030/capstone/labs/lab-01/question.md
+      - type: lab
+        title: "Harden The Keycloak Edge Capstone"
+        path: sections/section-030/capstone/labs/lab-01
+        difficulty: advanced
+        estimated_duration: 40m
+        topic: edge-security
+        task_kind: troubleshooting
+        tags: [proxy-headers, hostname, exposed-paths, brute-force, rate-limiting, nginx]
+        learning_goals:
+          - Find every way the proxy and the realm leave Keycloak open to the outside
+          - Fix the issuer, the exposed paths, brute force detection and rate limiting
+          - Prove each fix with a request through the proxy
+        resources:
+          - name: "Configuring a reverse proxy"
+            url: https://www.keycloak.org/server/reverseproxy
+          - name: "Configuring Keycloak for production"
+            url: https://www.keycloak.org/server/configuration-production
+
+  - id: module-040
+    title: "Backup, Restore And Upgrades"
+    description: >
+      What a Keycloak backup must contain, dumping and restoring the
+      PostgreSQL database next to the damaged one, and upgrading Keycloak with
+      the operator's update strategies.
+
+    content:
+      - type: reading
+        title: Section Overview
+        path: sections/section-040/README.md
+
+      - type: reading
+        title: "Back Up, Restore And Upgrade Keycloak"
+        path: sections/section-040/module-01/course.md
+      - type: reading
+        title: "What To Back Up"
+        path: sections/section-040/module-01/course-01-what-to-back-up.md
+      - type: reading
+        title: "Dump And Restore The Database"
+        path: sections/section-040/module-01/course-02-dump-and-restore-the-database.md
+      - type: reading
+        title: Question
+        path: sections/section-040/module-01/labs/lab-01/question.md
+      - type: lab
+        title: "Restore Keycloak From A Database Dump Lab"
+        path: sections/section-040/module-01/labs/lab-01
+        difficulty: intermediate
+        estimated_duration: 25m
+        topic: backup-restore
+        task_kind: migration
+        tags: [pg-dump, pg-restore, postgresql, keycloak-cr, db-options]
+        learning_goals:
+          - Restore a pg_dump archive into a new database next to the damaged one
+          - Point the Keycloak resource at the restored database
+          - Prove the restore with a realm that was lost and a token for alice
+        resources:
+          - name: "Configuring the database"
+            url: https://www.keycloak.org/server/db
+          - name: "Basic Keycloak deployment"
+            url: https://www.keycloak.org/operator/basic-deployment
+      - type: reading
+        title: "Upgrading Keycloak With The Operator"
+        path: sections/section-040/module-01/course-03-upgrading-with-the-operator.md
+      - type: reading
+        title: Summary
+        path: sections/section-040/module-01/course-04-summary.md
+
+      - type: reading
+        title: Question
+        path: sections/section-040/capstone/labs/lab-01/question.md
+      - type: lab
+        title: "Recover After A Failed Upgrade Capstone"
+        path: sections/section-040/capstone/labs/lab-01
+        difficulty: advanced
+        estimated_duration: 40m
+        topic: upgrades
+        task_kind: troubleshooting
+        tags: [image-rollback, update-strategy, pg-restore, keycloak-cr, status-conditions]
+        learning_goals:
+          - Roll back an image change that left Keycloak with no running pod
+          - Set the update strategy that allows rolling patch updates
+          - Restore lost data from the backup taken before the upgrade
+        resources:
+          - name: "Rolling updates"
+            url: https://www.keycloak.org/operator/rolling-updates
+          - name: "Configuring the database"
+            url: https://www.keycloak.org/server/db

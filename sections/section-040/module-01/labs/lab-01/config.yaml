@@ -1,0 +1,51 @@
+# Restore Keycloak From A Database Dump Lab
+# Astrona graded lab. Schema: internal/config.LabConfig.
+
+metadata:
+  name: "ats-093-lab-040-01"
+  docs:
+    guide: "solution.md"
+    solution: "solution.md"
+    question: "question.md"
+    examQuestion: "question.md"
+    prerequisites: "prerequisites.md"
+
+bootstrap:
+  init:
+    - name: "install-operator"
+      description: "Installs the Keycloak Operator 26.8.1, PostgreSQL and the tester pod in the namespace keycloak"
+      type: "file"
+      source: "bootstrap/01-install-operator.sh"
+    - name: "ats-093-lab-040-01-setup"
+      description: "Creates Keycloak with two realms, takes a database dump, then deletes a realm and a user from the live database"
+      type: "file"
+      source: "bootstrap/02-seed-state.sh"
+
+testing:
+  init:
+    - name: "wait-for-keycloak"
+      description: "Waits for the operator and PostgreSQL before the reference solution runs"
+      type: "file"
+      source: "testing/wait-for-keycloak.sh"
+    - name: "reference-solution"
+      description: "The remediation a correct learner performs; used by `astrona test`"
+      type: "file"
+      source: "solution/apply.sh"
+
+validation:
+  scripts:
+    - name: "validate-restored-database"
+      description: "Confirms the Keycloak resource uses the database keycloak_restored and is Ready"
+      type: "file"
+      source: "validation/validate-restored-database.sh"
+    - name: "validate-original-kept"
+      description: "Confirms the damaged database keycloak still exists next to keycloak_restored"
+      type: "file"
+      source: "validation/validate-original-kept.sh"
+    - name: "validate-lost-realm-back"
+      description: "Confirms the realm restore-check is back"
+      type: "file"
+      source: "validation/validate-lost-realm-back.sh"
+
+teardown:
+  keepCluster: false

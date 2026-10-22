@@ -1,0 +1,40 @@
+# Keycloak behind the nginx edge proxy: HTTP inside the cluster, the public
+# HTTPS hostname for every URL Keycloak builds, an internal URL for the
+# administration console, and X-Forwarded-* headers read from the proxy.
+apiVersion: k8s.keycloak.org/v2beta1
+kind: Keycloak
+metadata:
+  name: keycloak
+  namespace: keycloak
+spec:
+  instances: 1
+  db:
+    vendor: postgres
+    host: postgres
+    database: keycloak
+    usernameSecret:
+      name: keycloak-db
+      key: username
+    passwordSecret:
+      name: keycloak-db
+      key: password
+  http:
+    httpEnabled: true
+  hostname:
+    hostname: https://keycloak.localtest.me:8443
+    admin: http://localhost:8080
+  proxy:
+    headers: xforwarded
+  ingress:
+    enabled: false
+  additionalOptions:
+    - name: health-enabled
+      value: "true"
+    - name: metrics-enabled
+      value: "true"
+  resources:
+    requests:
+      memory: 768Mi
+      cpu: 250m
+    limits:
+      memory: 1536Mi

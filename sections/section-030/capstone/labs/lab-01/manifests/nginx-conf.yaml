@@ -1,0 +1,24 @@
+# nginx configuration this environment starts from: it forwards every path
+# to Keycloak, including the management port, and sends no X-Forwarded-*
+# headers.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-conf
+  namespace: keycloak
+data:
+  keycloak.conf: |
+    server {
+      listen 8443 ssl;
+      server_name keycloak.localtest.me;
+      ssl_certificate     /etc/nginx/tls/tls.crt;
+      ssl_certificate_key /etc/nginx/tls/tls.key;
+
+      location /metrics {
+        proxy_pass http://keycloak-service:9000;
+      }
+
+      location / {
+        proxy_pass http://keycloak-service:8080;
+      }
+    }

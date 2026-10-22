@@ -1,0 +1,34 @@
+# Creates the realm inventory once. alice's password comes from the Secret
+# inventory-secrets through the placeholder ALICE_PASSWORD.
+apiVersion: k8s.keycloak.org/v2beta1
+kind: KeycloakRealmImport
+metadata:
+  name: inventory
+  namespace: keycloak
+spec:
+  keycloakCRName: keycloak
+  placeholders:
+    ALICE_PASSWORD:
+      secret:
+        name: inventory-secrets
+        key: alice-password
+  realm:
+    realm: inventory
+    enabled: true
+    users:
+      - username: alice
+        enabled: true
+        email: alice@example.com
+        emailVerified: true
+        firstName: Alice
+        lastName: Example
+        credentials:
+          - type: password
+            value: ${ALICE_PASSWORD}
+            temporary: false
+    clients:
+      - clientId: inventory-cli
+        enabled: true
+        publicClient: true
+        standardFlowEnabled: false
+        directAccessGrantsEnabled: true
