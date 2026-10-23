@@ -41,7 +41,13 @@ kubectl -n keycloak patch keycloak keycloak --type merge \
   -p '{"spec":{"db":{"passwordSecret":{"name":"keycloak-db","key":"password"}}}}'
 ```
 
-The operator rolls the change out and replaces the pod. Wait a minute, then look at the pod again:
+The operator writes the change into the `keycloak` StatefulSet, but the StatefulSet does not replace a pod that never became ready. The old pod keeps the old configuration, so delete it. The StatefulSet then creates `keycloak-0` again from the fixed template:
+
+```sh
+kubectl -n keycloak delete pod keycloak-0
+```
+
+Wait a minute, then look at the pod again:
 
 ```sh
 kubectl -n keycloak get pods
@@ -70,6 +76,12 @@ Change the host in the resource:
 ```sh
 kubectl -n keycloak patch keycloak keycloak --type merge \
   -p '{"spec":{"db":{"host":"postgres"}}}'
+```
+
+The pod is still crashing with the old host, and for the same reason as before the StatefulSet does not replace it. Delete it again:
+
+```sh
+kubectl -n keycloak delete pod keycloak-0
 ```
 
 Wait until the condition turns `True`. The first start against an empty database creates the schema and takes a minute or two:

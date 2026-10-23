@@ -312,13 +312,18 @@ that OAuth 2.1 drops it.
   BASE=https://raw.githubusercontent.com/keycloak/keycloak-k8s-resources/26.8.1/kubernetes
   kubectl apply -f $BASE/keycloaks.k8s.keycloak.org-v1.yml
   kubectl apply -f $BASE/keycloakrealmimports.k8s.keycloak.org-v1.yml
+  kubectl apply -f $BASE/keycloakoidcclients.k8s.keycloak.org-v1.yml
+  kubectl apply -f $BASE/keycloaksamlclients.k8s.keycloak.org-v1.yml
   kubectl -n keycloak apply -f $BASE/kubernetes.yml
   ```
 
   The documentation shows the same install as
   `kubectl apply -k 'github.com/keycloak/keycloak-k8s-resources/kubernetes?ref=26.8.1'`,
   which needs `git` on the machine. The 26.8.1 set also has CRDs for
-  `KeycloakOIDCClient` and `KeycloakSAMLClient`; this course does not use them.
+  `KeycloakOIDCClient` and `KeycloakSAMLClient`. This course does not use
+  them, but **install all four CRDs**: seen on a live run (2026-10-23), the
+  operator watches all four kinds and crash-loops at start when one CRD is
+  missing.
 - **Every `Keycloak` CR in this course sets** `http.httpEnabled: true`,
   `hostname.hostname`, `ingress.enabled: false` (kind has no ingress
   controller), and `resources` of 768Mi request and 1536Mi limit. Without

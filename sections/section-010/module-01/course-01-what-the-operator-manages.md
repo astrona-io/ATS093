@@ -12,10 +12,12 @@ The playground installed the operator from the plain manifests of the Keycloak p
 BASE=https://raw.githubusercontent.com/keycloak/keycloak-k8s-resources/26.8.1/kubernetes
 kubectl apply -f $BASE/keycloaks.k8s.keycloak.org-v1.yml
 kubectl apply -f $BASE/keycloakrealmimports.k8s.keycloak.org-v1.yml
+kubectl apply -f $BASE/keycloakoidcclients.k8s.keycloak.org-v1.yml
+kubectl apply -f $BASE/keycloaksamlclients.k8s.keycloak.org-v1.yml
 kubectl -n keycloak apply -f $BASE/kubernetes.yml
 ```
 
-The first two files are CRDs. The third holds the operator's Deployment, its ServiceAccount and the roles that let it manage objects. The Keycloak documentation also shows a one-line form, `kubectl apply -k 'github.com/keycloak/keycloak-k8s-resources/kubernetes?ref=26.8.1'`, which installs the same set through Kustomize and needs `git` on your machine. The full set for 26.8.1 also has CRDs for `KeycloakOIDCClient` and `KeycloakSAMLClient`; this course does not use them.
+The first four files are CRDs. The third holds the operator's Deployment, its ServiceAccount and the roles that let it manage objects. The Keycloak documentation also shows a one-line form, `kubectl apply -k 'github.com/keycloak/keycloak-k8s-resources/kubernetes?ref=26.8.1'`, which installs the same set through Kustomize and needs `git` on your machine. Two of the CRDs are for `KeycloakOIDCClient` and `KeycloakSAMLClient`, which this course does not use. Install them anyway: the operator watches all four kinds and stops at start, in a crash loop, when one of the CRDs is missing.
 
 Look at what is running. List the operator and the CRDs it brought:
 

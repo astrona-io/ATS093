@@ -15,9 +15,26 @@ keycloak_condition() {
 }
 
 # Waits until the Keycloak resource reports Ready=True (up to ten minutes).
+replace_stuck_pods() {
+  # A StatefulSet does not replace a pod that never became Ready, even after
+  # the operator updated the pod template (seen on a live run). Delete pods
+  # that are not Ready and still run an old revision, so the fixed template
+  # is used. Healthy pods and pods on the new revision are left alone.
+  local update_revision pod
+  update_revision="$(kubectl -n "$NAMESPACE" get statefulset keycloak -o jsonpath='{.status.updateRevision}' 2>/dev/null)"
+  [ -n "$update_revision" ] || return 0
+  # StatefulSet pods are named keycloak-0, keycloak-1, ...
+  for pod in $(kubectl -n "$NAMESPACE" get pods \
+      -o jsonpath='{range .items[*]}{.metadata.name}{" "}{.metadata.labels.controller-revision-hash}{" "}{.status.containerStatuses[0].ready}{"\n"}{end}' 2>/dev/null \
+      | awk -v rev="$update_revision" '$1 ~ /^keycloak-[0-9]+$/ && $2 != rev && $3 != "true" {print $1}'); do
+    kubectl -n "$NAMESPACE" delete pod "$pod" --wait=false
+  done
+}
+
 wait_for_keycloak_ready() {
-  for _ in $(seq 1 120); do
+  for i in $(seq 1 120); do
     [ "$(keycloak_condition Ready)" = "True" ] && return 0
+    [ $((i % 6)) -eq 0 ] && replace_stuck_pods
     sleep 5
   done
   return 1

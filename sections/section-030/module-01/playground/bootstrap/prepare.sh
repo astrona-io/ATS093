@@ -81,9 +81,13 @@ kubectl apply -f "$MANIFEST_DIR/lab-start.yaml"
 echo "[playground] Installing the Keycloak Operator ${OPERATOR_VERSION}..."
 kubectl apply -f "$BASE/keycloaks.k8s.keycloak.org-v1.yml"
 kubectl apply -f "$BASE/keycloakrealmimports.k8s.keycloak.org-v1.yml"
+kubectl apply -f "$BASE/keycloakoidcclients.k8s.keycloak.org-v1.yml"
+kubectl apply -f "$BASE/keycloaksamlclients.k8s.keycloak.org-v1.yml"
 kubectl -n "$NAMESPACE" apply -f "$BASE/kubernetes.yml"
 kubectl wait --for=condition=Established crd/keycloaks.k8s.keycloak.org --timeout=60s
 kubectl wait --for=condition=Established crd/keycloakrealmimports.k8s.keycloak.org --timeout=60s
+kubectl wait --for=condition=Established crd/keycloakoidcclients.k8s.keycloak.org --timeout=60s
+kubectl wait --for=condition=Established crd/keycloaksamlclients.k8s.keycloak.org --timeout=60s
 
 kubectl -n "$NAMESPACE" rollout status deployment/keycloak-operator --timeout=600s
 kubectl -n "$NAMESPACE" rollout status deployment/postgres --timeout=300s

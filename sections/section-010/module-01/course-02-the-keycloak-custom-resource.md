@@ -143,6 +143,7 @@ You now know the fields a `Keycloak` resource needs, how the operator reports a 
 > - **Typing the database password into `additionalOptions`.** It works, and it puts the password in plain text in a resource many people can read. Use `db.passwordSecret`.
 > - **Stopping at the condition.** `Ready=False` says only that something is wrong. The pod events and the Keycloak log say what.
 > - **Leaving out `hostname`.** Keycloak in production mode refuses to start without it, and the operator always runs production mode.
+> - **Waiting for a broken pod to fix itself.** After you correct the `Keycloak` resource, the operator updates the StatefulSet, but the StatefulSet does not replace a pod that never became ready. Delete the stuck pod (`kubectl -n keycloak delete pod keycloak-0`) so it is created again from the fixed template.
 > - **Leaving out `resources` on a small cluster.** The default request of 1700MiB per pod leaves a second pod stuck in `Pending`.
 
 ## Your mission: Fix A Keycloak Resource That Never Becomes Ready
