@@ -39,6 +39,21 @@ wait_for_keycloak_ready() {
   return 1
 }
 
+# wait_for_reconciled: waits until the operator has acted on the latest change
+# to the Keycloak resource: the Ready condition belongs to the current
+# generation and is True, and no rolling update is running. A fixed sleep is
+# not enough; on a busy node the operator starts the update later.
+wait_for_reconciled() {
+  local state
+  for _ in $(seq 1 180); do
+    state="$(kubectl -n "$NAMESPACE" get keycloak keycloak -o jsonpath='{.metadata.generation} {.status.conditions[?(@.type=="Ready")].observedGeneration} {.status.conditions[?(@.type=="Ready")].status} {.status.conditions[?(@.type=="RollingUpdate")].status}')"
+    set -- $state
+    [ "${1:-}" = "${2:-}" ] && [ "${3:-}" = True ] && [ "${4:-}" != True ] && return 0
+    sleep 5
+  done
+  return 1
+}
+
 # Runs kcadm.sh inside the first Keycloak pod.
 kcadm() {
   kubectl -n "$NAMESPACE" exec -i keycloak-0 -- \
@@ -80,6 +95,6 @@ set -e
 kubectl -n "$NAMESPACE" exec deploy/postgres -- createdb -U keycloak keycloak_restored
 kubectl -n "$NAMESPACE" exec deploy/postgres -- pg_restore -U keycloak -d keycloak_restored --no-owner /backup/keycloak.dump
 kubectl -n "$NAMESPACE" patch keycloak keycloak --type merge -p '{"spec":{"db":{"database":"keycloak_restored"}}}'
-sleep 20
+wait_for_reconciled
 kubectl -n "$NAMESPACE" rollout status statefulset/keycloak --timeout=600s
 wait_for_keycloak_ready
