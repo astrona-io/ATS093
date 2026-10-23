@@ -9,7 +9,6 @@ metadata:
     question: "question.md"
     examQuestion: "question.md"
     prerequisites: "prerequisites.md"
-
 bootstrap:
   init:
     - name: "install-operator"
@@ -20,7 +19,6 @@ bootstrap:
       description: "Applies a Keycloak resource with two instances that do not form one cluster, and imports the realm inventory"
       type: "file"
       source: "bootstrap/02-seed-state.sh"
-
 testing:
   init:
     - name: "wait-for-keycloak"
@@ -31,7 +29,6 @@ testing:
       description: "The remediation a correct learner performs; used by `astrona test`"
       type: "file"
       source: "solution/apply.sh"
-
 validation:
   scripts:
     - name: "validate-two-ready-instances"
@@ -46,6 +43,10 @@ validation:
       description: "Confirms vendor_cluster_size is 2 on both Keycloak pods"
       type: "file"
       source: "validation/validate-cluster-size.sh"
-
 teardown:
   keepCluster: false
+runtime:
+  kind:
+    preloadImages:
+      - nicolaka/netshoot:v0.13
+      - postgres:17-alpine

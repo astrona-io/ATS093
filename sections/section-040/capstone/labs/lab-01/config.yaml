@@ -9,7 +9,6 @@ metadata:
     question: "question.md"
     examQuestion: "question.md"
     prerequisites: "prerequisites.md"
-
 bootstrap:
   init:
     - name: "install-operator"
@@ -20,7 +19,6 @@ bootstrap:
       description: "Creates Keycloak with two realms, takes a dump, loses a realm, then sets an image that does not exist"
       type: "file"
       source: "bootstrap/02-seed-state.sh"
-
 testing:
   init:
     - name: "wait-for-keycloak"
@@ -31,7 +29,6 @@ testing:
       description: "The remediation a correct learner performs; used by `astrona test`"
       type: "file"
       source: "solution/apply.sh"
-
 validation:
   scripts:
     - name: "validate-image-rolled-back"
@@ -54,6 +51,10 @@ validation:
       description: "Confirms the realm restore-check is back"
       type: "file"
       source: "validation/validate-lost-realm-back.sh"
-
 teardown:
   keepCluster: false
+runtime:
+  kind:
+    preloadImages:
+      - nicolaka/netshoot:v0.13
+      - postgres:17-alpine

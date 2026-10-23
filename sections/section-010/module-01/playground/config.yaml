@@ -7,7 +7,6 @@ metadata:
   name: "ats-093-playground-010-01"
   docs:
     guide: "docs/overview.md"
-
 bootstrap:
   init:
     - name: "prepare"
@@ -19,6 +18,10 @@ bootstrap:
       description: "Namespace keycloak, PostgreSQL, the database and realm Secrets, and the tester client."
       type: "file"
       source: "manifests/lab-start.yaml"
-
 teardown:
   keepCluster: false
+runtime:
+  kind:
+    preloadImages:
+      - nicolaka/netshoot:v0.13
+      - postgres:17-alpine
