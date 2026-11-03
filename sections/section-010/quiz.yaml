@@ -244,3 +244,463 @@ questions:
     correct_option: c
     explanation: "Correct. It never updates or deletes an existing realm."
 
+
+  - id: ats093-010-q11
+    type: single_choice
+    difficulty: beginner
+    learning_objective: "Explain request and limit"
+    source_readings:
+      - sections/section-010/module-02/course-01-resources-and-java-memory.md
+    prompt: "What does the scheduler use to decide whether a pod fits on a node?"
+    options:
+      - id: a
+        text: "The number of instances in the Keycloak resource."
+        explanation: "Not correct. Each pod is placed on its own."
+      - id: b
+        text: "The resource request of the container."
+        explanation: "Correct. The scheduler reserves the request and places the pod only on a node that has it free."
+      - id: c
+        text: "The memory limit of the container."
+        explanation: "Not correct. The limit is enforced while the container runs, not when it is placed."
+      - id: d
+        text: "The size of the container image."
+        explanation: "Not correct. Image size does not decide the placement."
+    correct_option: b
+    explanation: "Correct. The scheduler reserves the request and places the pod only on a node that has it free."
+
+  - id: ats093-010-q12
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Link the heap to the memory limit"
+    source_readings:
+      - sections/section-010/module-02/course-01-resources-and-java-memory.md
+    prompt: "How does the Keycloak container size the Java heap by default?"
+    options:
+      - id: a
+        text: "As a percentage of the container memory limit."
+        explanation: "Correct. The maximum heap is about 70 percent of the limit."
+      - id: b
+        text: "As a fixed 512 MiB."
+        explanation: "Not correct. The size follows the limit, not a fixed number."
+      - id: c
+        text: "As the memory request of the pod."
+        explanation: "Not correct. The request only affects scheduling."
+      - id: d
+        text: "As half of the node memory, whatever the limit."
+        explanation: "Not correct. A limit changes the heap size, and without one the JVM looks at the node."
+    correct_option: a
+    explanation: "Correct. The maximum heap is about 70 percent of the limit."
+
+  - id: ats093-010-q13
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Read a kill reason"
+    source_readings:
+      - sections/section-010/module-02/course-01-resources-and-java-memory.md
+    prompt: "`kubectl describe pod` shows the last state `OOMKilled` with exit code 137. What does this mean?"
+    options:
+      - id: a
+        text: "The node ran out of disk space."
+        explanation: "Not correct. Disk pressure gives a different reason."
+      - id: b
+        text: "The readiness probe failed too often."
+        explanation: "Not correct. A failed probe restarts the container with a different reason."
+      - id: c
+        text: "The operator deleted the pod."
+        explanation: "Not correct. The operator does not use this reason."
+      - id: d
+        text: "The container went over its memory limit and the kernel ended it."
+        explanation: "Correct. OOMKilled is the kernel ending a container above its memory limit."
+    correct_option: d
+    explanation: "Correct. OOMKilled is the kernel ending a container above its memory limit."
+
+  - id: ats093-010-q14
+    type: single_choice
+    difficulty: beginner
+    learning_objective: "Diagnose a Pending pod"
+    source_readings:
+      - sections/section-010/module-02/course-01-resources-and-java-memory.md
+    prompt: "A Keycloak pod stays `Pending` and the Keycloak resource looks valid. Where is the reason?"
+    options:
+      - id: a
+        text: "In the realm settings."
+        explanation: "Not correct. A realm cannot influence scheduling."
+      - id: b
+        text: "In the PostgreSQL log."
+        explanation: "Not correct. The database is not involved in placement."
+      - id: c
+        text: "In the events of the pod."
+        explanation: "Correct. The scheduler records why it could not place the pod in the pod events."
+      - id: d
+        text: "In the Keycloak log."
+        explanation: "Not correct. The container never started, so there is no Keycloak log."
+    correct_option: c
+    explanation: "Correct. The scheduler records why it could not place the pod in the pod events."
+
+  - id: ats093-010-q15
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Choose a spread mode"
+    source_readings:
+      - sections/section-010/module-02/course-02-scheduling-and-priority.md
+    prompt: "Which setting lets a pod start even when a topology spread constraint cannot be met?"
+    options:
+      - id: a
+        text: "`topologyKey: none`"
+        explanation: "Not correct. The key must name a node label."
+      - id: b
+        text: "`whenUnsatisfiable: ScheduleAnyway`"
+        explanation: "Correct. ScheduleAnyway only prefers an even spread."
+      - id: c
+        text: "`whenUnsatisfiable: DoNotSchedule`"
+        explanation: "Not correct. DoNotSchedule leaves the pod Pending."
+      - id: d
+        text: "`maxSkew: 0`"
+        explanation: "Not correct. A skew of zero is stricter."
+    correct_option: b
+    explanation: "Correct. ScheduleAnyway only prefers an even spread."
+
+  - id: ats093-010-q16
+    type: single_choice
+    difficulty: beginner
+    learning_objective: "Explain tolerations"
+    source_readings:
+      - sections/section-010/module-02/course-02-scheduling-and-priority.md
+    prompt: "What does a toleration in `scheduling.tolerations` do?"
+    options:
+      - id: a
+        text: "It allows the pod to run on a node with a matching taint."
+        explanation: "Correct. A toleration only permits the node; it does not choose it."
+      - id: b
+        text: "It forces the pod onto a node with a matching taint."
+        explanation: "Not correct. Use node affinity to require a node."
+      - id: c
+        text: "It removes the taint from the node."
+        explanation: "Not correct. The node keeps its taint."
+      - id: d
+        text: "It gives the pod a higher priority."
+        explanation: "Not correct. Priority comes from the priority class."
+    correct_option: a
+    explanation: "Correct. A toleration only permits the node; it does not choose it."
+
+  - id: ats093-010-q17
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Name the option format"
+    source_readings:
+      - sections/section-010/module-02/course-03-server-options-and-secrets.md
+    prompt: "How do you write the option `--log-level` as an entry in `additionalOptions`?"
+    options:
+      - id: a
+        text: "`name: --log-level`"
+        explanation: "Not correct. Leave out the dashes."
+      - id: b
+        text: "`name: KC_LOG_LEVEL`"
+        explanation: "Not correct. The operator creates the environment variable name itself."
+      - id: c
+        text: "`name: logLevel`"
+        explanation: "Not correct. The name stays in the Keycloak spelling."
+      - id: d
+        text: "`name: log-level`"
+        explanation: "Correct. The name is the command-line name without dashes."
+    correct_option: d
+    explanation: "Correct. The name is the command-line name without dashes."
+
+  - id: ats093-010-q18
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Keep a password out of the resource"
+    source_readings:
+      - sections/section-010/module-02/course-03-server-options-and-secrets.md
+    prompt: "How does an `additionalOptions` entry read its value from a Secret?"
+    options:
+      - id: a
+        text: "With `valueFrom` and `configMapKeyRef`."
+        explanation: "Not correct. A ConfigMap is not a place for a password."
+      - id: b
+        text: "It cannot; only plain values are possible."
+        explanation: "Not correct. The secret reference exists for this purpose."
+      - id: c
+        text: "With `secret` holding `name` and `key`, instead of `value`."
+        explanation: "Correct. The operator adds an environment variable that reads the Secret key."
+      - id: d
+        text: "With `value: secret://name/key`."
+        explanation: "Not correct. There is no such URL syntax."
+    correct_option: c
+    explanation: "Correct. The operator adds an environment variable that reads the Secret key."
+
+  - id: ats093-010-q19
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Use an optimized image"
+    source_readings:
+      - sections/section-010/module-02/course-04-pod-template-and-custom-images.md
+    prompt: "You built a custom image with `kc.sh build`. Which field tells the operator to skip the build at start?"
+    options:
+      - id: a
+        text: "`unsupported.optimized: true`"
+        explanation: "Not correct. There is no such field."
+      - id: b
+        text: "`startOptimized: true`"
+        explanation: "Correct. The operator then starts Keycloak with the optimized option."
+      - id: c
+        text: "`image: optimized`"
+        explanation: "Not correct. The image field holds the image name."
+      - id: d
+        text: "`instances: 0`"
+        explanation: "Not correct. This only stops all pods."
+    correct_option: b
+    explanation: "Correct. The operator then starts Keycloak with the optimized option."
+
+  - id: ats093-010-q20
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "State the status of the pod template"
+    source_readings:
+      - sections/section-010/module-02/course-04-pod-template-and-custom-images.md
+    prompt: "Why is `unsupported.podTemplate` called unsupported?"
+    options:
+      - id: a
+        text: "A later operator version can change the generated template, and the merge can break."
+        explanation: "Correct. The project does not support deployments that depend on the merge."
+      - id: b
+        text: "It only works on OpenShift."
+        explanation: "Not correct. It is not limited to one platform."
+      - id: c
+        text: "It is removed in Keycloak 26."
+        explanation: "Not correct. The field exists in 26.8."
+      - id: d
+        text: "It cannot change any field."
+        explanation: "Not correct. It can change many fields."
+    correct_option: a
+    explanation: "Correct. The project does not support deployments that depend on the merge."
+
+  - id: ats093-010-q21
+    type: single_choice
+    difficulty: beginner
+    learning_objective: "Describe what an import creates"
+    source_readings:
+      - sections/section-010/module-03/course-01-how-a-realm-import-works.md
+    prompt: "What does the operator create when a `KeycloakRealmImport` is applied?"
+    options:
+      - id: a
+        text: "A StatefulSet that holds the realm."
+        explanation: "Not correct. The realm lives in the database."
+      - id: b
+        text: "A new Keycloak instance for the realm."
+        explanation: "Not correct. The import uses the existing Keycloak."
+      - id: c
+        text: "A ConfigMap that Keycloak reads at every start."
+        explanation: "Not correct. The realm is stored in the database, not read from a ConfigMap."
+      - id: d
+        text: "A Job that runs Keycloak once to import the realm."
+        explanation: "Correct. The Job writes the realm into the database and stops."
+    correct_option: d
+    explanation: "Correct. The Job writes the realm into the database and stops."
+
+  - id: ats093-010-q22
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Predict the effect of editing an import"
+    source_readings:
+      - sections/section-010/module-03/course-01-how-a-realm-import-works.md
+    prompt: "The realm already exists. You change `accessTokenLifespan` in the `KeycloakRealmImport` and apply it. What happens to the realm?"
+    options:
+      - id: a
+        text: "The operator updates the realm."
+        explanation: "Not correct. The operator does not update realms."
+      - id: b
+        text: "The operator deletes and recreates the realm."
+        explanation: "Not correct. The operator never deletes realm data."
+      - id: c
+        text: "Keycloak applies the change at the next restart."
+        explanation: "Not correct. A restart does not rerun the import with new values."
+      - id: d
+        text: "Nothing; an import skips a realm that exists."
+        explanation: "Correct. The import never updates an existing realm."
+    correct_option: d
+    explanation: "Correct. The import never updates an existing realm."
+
+  - id: ats093-010-q23
+    type: single_choice
+    difficulty: beginner
+    learning_objective: "Find a failed import cause"
+    source_readings:
+      - sections/section-010/module-03/course-01-how-a-realm-import-works.md
+    prompt: "A `KeycloakRealmImport` shows `HasErrors=True`. Where is the cause?"
+    options:
+      - id: a
+        text: "In the realm settings of the master realm."
+        explanation: "Not correct. The master realm does not hold import errors."
+      - id: b
+        text: "In the PostgreSQL configuration."
+        explanation: "Not correct. The database is not where the import reports."
+      - id: c
+        text: "In the Keycloak ingress."
+        explanation: "Not correct. The ingress does not take part in the import."
+      - id: d
+        text: "In the log of the import Job pod."
+        explanation: "Correct. The condition message is short; the Job log has the exception."
+    correct_option: d
+    explanation: "Correct. The condition message is short; the Job log has the exception."
+
+  - id: ats093-010-q24
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Use kcadm against a live realm"
+    source_readings:
+      - sections/section-010/module-03/course-02-changing-a-realm-that-exists.md
+    prompt: "Which option of `kcadm.sh` selects the realm to work on?"
+    options:
+      - id: a
+        text: "`-n`"
+        explanation: "Not correct. `-n` is not the realm option."
+      - id: b
+        text: "`--realm-id`"
+        explanation: "Not correct. There is no such option."
+      - id: c
+        text: "`-s`"
+        explanation: "Not correct. `-s` sets a field."
+      - id: d
+        text: "`-r`"
+        explanation: "Correct. Without `-r` the command works on the master realm."
+    correct_option: d
+    explanation: "Correct. Without `-r` the command works on the master realm."
+
+  - id: ats093-010-q25
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Look up a client"
+    source_readings:
+      - sections/section-010/module-03/course-02-changing-a-realm-that-exists.md
+    prompt: "You want to update a client. What does the Admin REST API path use to identify it?"
+    options:
+      - id: a
+        text: "The client ID."
+        explanation: "Not correct. The client ID is a search field, not the path key."
+      - id: b
+        text: "The display name."
+        explanation: "Not correct. The display name is not unique."
+      - id: c
+        text: "The redirect URI."
+        explanation: "Not correct. A redirect URI does not identify a client."
+      - id: d
+        text: "The UUID of the client."
+        explanation: "Correct. Look it up first with `-q clientId=...`."
+    correct_option: d
+    explanation: "Correct. Look it up first with `-q clientId=...`."
+
+  - id: ats093-010-q26
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Choose a partial import rule"
+    source_readings:
+      - sections/section-010/module-03/course-02-changing-a-realm-that-exists.md
+    prompt: "You want to add clients that are missing and leave existing clients unchanged. Which `ifResourceExists` value fits?"
+    options:
+      - id: a
+        text: "`OVERWRITE`"
+        explanation: "Not correct. OVERWRITE replaces them."
+      - id: b
+        text: "`FAIL`"
+        explanation: "Not correct. FAIL stops with an error."
+      - id: c
+        text: "`MERGE`"
+        explanation: "Not correct. MERGE is not a value."
+      - id: d
+        text: "`SKIP`"
+        explanation: "Correct. SKIP keeps existing entries."
+    correct_option: d
+    explanation: "Correct. SKIP keeps existing entries."
+
+  - id: ats093-010-q27
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Name immutable client resource fields"
+    source_readings:
+      - sections/section-010/module-03/course-03-client-resources.md
+    prompt: "Which fields of a `KeycloakOIDCClient` cannot be changed after creation?"
+    options:
+      - id: a
+        text: "`redirectUris` and `webOrigins`"
+        explanation: "Not correct. These can be updated."
+      - id: b
+        text: "`displayName` and `description`"
+        explanation: "Not correct. These can be updated."
+      - id: c
+        text: "`loginFlows` and `roles`"
+        explanation: "Not correct. These can be updated."
+      - id: d
+        text: "`realm` and `keycloakCRName`"
+        explanation: "Correct. The API server refuses a change to them."
+    correct_option: d
+    explanation: "Correct. The API server refuses a change to them."
+
+  - id: ats093-010-q28
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Keep a client secret out of the resource"
+    source_readings:
+      - sections/section-010/module-03/course-03-client-resources.md
+    prompt: "How does a `KeycloakOIDCClient` get its client secret without writing it into the resource?"
+    options:
+      - id: a
+        text: "With a placeholder in `spec.placeholders`."
+        explanation: "Not correct. Placeholders belong to the realm import."
+      - id: b
+        text: "With the environment variable `KC_CLIENT_SECRET`."
+        explanation: "Not correct. That variable does not exist."
+      - id: c
+        text: "It cannot; the secret is always in the resource."
+        explanation: "Not correct. A secret reference exists for this."
+      - id: d
+        text: "With `client.auth.secretRef` that points at a Secret key."
+        explanation: "Correct. The secret stays in a Kubernetes Secret."
+    correct_option: d
+    explanation: "Correct. The secret stays in a Kubernetes Secret."
+
+  - id: ats093-010-q29
+    type: single_choice
+    difficulty: beginner
+    learning_objective: "Explain placeholders"
+    source_readings:
+      - sections/section-010/module-03/course-04-configuration-across-environments.md
+    prompt: "What do `spec.placeholders` of a `KeycloakRealmImport` do?"
+    options:
+      - id: a
+        text: "They create the Secrets of the realm."
+        explanation: "Not correct. The Secret must already exist."
+      - id: b
+        text: "They list the realms to import."
+        explanation: "Not correct. Realms are set in `spec.realm`."
+      - id: c
+        text: "They encrypt the realm file."
+        explanation: "Not correct. Placeholders only substitute values."
+      - id: d
+        text: "They replace `${NAME}` in the realm with a value from a Secret."
+        explanation: "Correct. The Job reads the values as environment variables."
+    correct_option: d
+    explanation: "Correct. The Job reads the values as environment variables."
+
+  - id: ats093-010-q30
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Define drift"
+    source_readings:
+      - sections/section-010/module-03/course-04-configuration-across-environments.md
+    prompt: "What is drift?"
+    options:
+      - id: a
+        text: "A pod that moves to another node."
+        explanation: "Not correct. That is scheduling."
+      - id: b
+        text: "A token that expires early."
+        explanation: "Not correct. That is token lifetime."
+      - id: c
+        text: "A delay between two Keycloak instances."
+        explanation: "Not correct. That is cache replication."
+      - id: d
+        text: "The difference between the definition in Git and the live realm."
+        explanation: "Correct. It grows with manual changes, because the import never corrects it."
+    correct_option: d
+    explanation: "Correct. It grows with manual changes, because the import never corrects it."

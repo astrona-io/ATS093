@@ -1,0 +1,37 @@
+# Keycloak with two instances on PostgreSQL, HTTP inside the cluster, no
+# Ingress, metrics on (for vendor_cluster_size), and resources small enough
+# for two pods on a laptop.
+apiVersion: k8s.keycloak.org/v2beta1
+kind: Keycloak
+metadata:
+  name: keycloak
+  namespace: keycloak
+spec:
+  instances: 2
+  db:
+    vendor: postgres
+    host: postgres
+    database: keycloak
+    usernameSecret:
+      name: keycloak-db
+      key: username
+    passwordSecret:
+      name: keycloak-db
+      key: password
+  http:
+    httpEnabled: true
+  hostname:
+    hostname: http://keycloak-service:8080
+  ingress:
+    enabled: false
+  additionalOptions:
+    - name: health-enabled
+      value: "true"
+    - name: metrics-enabled
+      value: "true"
+  resources:
+    requests:
+      memory: 768Mi
+      cpu: 250m
+    limits:
+      memory: 1536Mi

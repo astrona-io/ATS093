@@ -12,16 +12,34 @@ This section explains which data lives where, how the pods find each other, and 
 - How instances find each other with the default `jdbc-ping` stack, and which ports and network policy they need.
 - Proving a cluster with the `ISPN000094` log line and the `vendor_cluster_size` metric.
 - Keeping a user session alive when a pod is deleted.
+- Bounding the embedded caches, choosing where sessions live, and securing the traffic between the pods.
+- Disruption budgets, spreading, scaling, graceful shutdown and the step to multi-site.
 
 ## The learning path
 
-The section has one module. It has a landing page, two short parts, a graded lab right after the part it tests, and a summary. The landing page starts the module's playground: a cluster where the operator runs Keycloak with two instances on PostgreSQL.
+The section has modules with a landing page, short parts, a graded lab right after the part it tests, and a summary. The landing page starts the module's playground: a cluster where the operator runs Keycloak with two instances on PostgreSQL.
 
 ### 1. Run Keycloak As A Cluster
 
 1. The Database Is The Source Of Truth
 2. Infinispan Caches And Cluster Discovery, followed by the lab **Join Two Keycloak Instances Into One Cluster**
 3. Summary
+
+### 2. Tune Caches And Sessions
+
+1. Cache Types And Limits
+2. Sessions In Memory And In The Database, followed by the lab **Limit The Embedded Caches**
+3. Cluster Transport And Its Security
+4. Sizing And Observing Caches
+5. Summary
+
+### 3. Scale And Keep Keycloak Available
+
+1. Planned And Unplanned Disruption, followed by the lab **Fix The Disruption Budget**
+2. Spreading The Pods
+3. Scaling Keycloak
+4. Graceful Shutdown And Multi-Site
+5. Summary
 
 ## Section capstone: Keep Sessions Alive Through A Pod Restart
 

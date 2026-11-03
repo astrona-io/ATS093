@@ -244,3 +244,232 @@ questions:
     correct_option: b
     explanation: "Correct. That is why a dump comes before every upgrade."
 
+  - id: ats093-040-q11
+    type: single_choice
+    difficulty: beginner
+    learning_objective: "Know what a partial export leaves out"
+    source_readings:
+      - sections/section-040/module-02/course-01-the-ways-to-export-and-import.md
+    prompt: "Which part of a realm can a partial export never include?"
+    options:
+      - id: a
+        text: "The groups."
+        explanation: "Not correct. Groups can be included."
+      - id: b
+        text: "The users."
+        explanation: "Correct. Use the offline export for users."
+      - id: c
+        text: "The clients."
+        explanation: "Not correct. Clients can be included."
+      - id: d
+        text: "The roles."
+        explanation: "Not correct. Roles can be included."
+    correct_option: b
+    explanation: "Correct. Use the offline export for users."
+
+  - id: ats093-040-q12
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Choose the route that carries users"
+    source_readings:
+      - sections/section-040/module-02/course-01-the-ways-to-export-and-import.md
+    prompt: "Which route moves a realm together with its users?"
+    options:
+      - id: a
+        text: "The health endpoint."
+        explanation: "Not correct. It is not an export."
+      - id: b
+        text: "The offline export and import with `kc.sh`."
+        explanation: "Correct. It runs as its own process against the database."
+      - id: c
+        text: "The partial export."
+        explanation: "Not correct. It has no users."
+      - id: d
+        text: "A `KeycloakRealmImport` of a partial export."
+        explanation: "Not correct. The file would have none."
+    correct_option: b
+    explanation: "Correct. It runs as its own process against the database."
+
+  - id: ats093-040-q13
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Describe the realm import"
+    source_readings:
+      - sections/section-040/module-02/course-01-the-ways-to-export-and-import.md
+    prompt: "A `KeycloakRealmImport` names a realm that already exists. What happens?"
+    options:
+      - id: a
+        text: "The Keycloak pods restart."
+        explanation: "Not correct. No restart is caused."
+      - id: b
+        text: "The existing realm is not changed."
+        explanation: "Correct. The import creates a realm only when it is missing."
+      - id: c
+        text: "The realm is replaced."
+        explanation: "Not correct. It does not replace."
+      - id: d
+        text: "The users are deleted."
+        explanation: "Not correct. Nothing is deleted."
+    correct_option: b
+    explanation: "Correct. The import creates a realm only when it is missing."
+
+  - id: ats093-040-q14
+    type: single_choice
+    difficulty: beginner
+    learning_objective: "Read a masked secret"
+    source_readings:
+      - sections/section-040/module-02/course-02-working-with-the-export-file.md
+    prompt: "What does `\"secret\": \"**********\"` in a partial export mean?"
+    options:
+      - id: a
+        text: "The secret is encrypted and can be read later."
+        explanation: "Not correct. It is not recoverable."
+      - id: b
+        text: "The real value was hidden."
+        explanation: "Correct. Importing it would set the mask as the secret."
+      - id: c
+        text: "The secret is ten characters."
+        explanation: "Not correct. The length is not shown."
+      - id: d
+        text: "The secret is empty."
+        explanation: "Not correct. An empty secret is not masked."
+    correct_option: b
+    explanation: "Correct. Importing it would set the mask as the secret."
+
+  - id: ats093-040-q15
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Make a file safe to keep"
+    source_readings:
+      - sections/section-040/module-02/course-02-working-with-the-export-file.md
+    prompt: "How do you make an exported file safe to keep in Git?"
+    options:
+      - id: a
+        text: "Put the real secrets in a comment."
+        explanation: "Not correct. That leaks them."
+      - id: b
+        text: "Replace each mask with a placeholder filled from a Secret."
+        explanation: "Correct. Then check that no mask or real value remains."
+      - id: c
+        text: "Leave the masks in place."
+        explanation: "Not correct. The import would use the mask."
+      - id: d
+        text: "Base64-encode the secrets."
+        explanation: "Not correct. Encoding is not protection."
+    correct_option: b
+    explanation: "Correct. Then check that no mask or real value remains."
+
+  - id: ats093-040-q16
+    type: single_choice
+    difficulty: advanced
+    learning_objective: "Check for leftovers"
+    source_readings:
+      - sections/section-040/module-02/course-02-working-with-the-export-file.md
+    prompt: "After replacing a secret, which check do you run on the file?"
+    options:
+      - id: a
+        text: "Check that it is a single line."
+        explanation: "Not correct. Layout is unrelated."
+      - id: b
+        text: "Search it for the asterisks and for the real value."
+        explanation: "Correct. Both are findings."
+      - id: c
+        text: "Check the file size."
+        explanation: "Not correct. Size says nothing."
+      - id: d
+        text: "Check that it is sorted."
+        explanation: "Not correct. Order is not a secret check."
+    correct_option: b
+    explanation: "Correct. Both are findings."
+
+  - id: ats093-040-q17
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Handle environment differences"
+    source_readings:
+      - sections/section-040/module-02/course-03-migrating-between-environments.md
+    prompt: "Which value must differ between test and production?"
+    options:
+      - id: a
+        text: "The JSON syntax."
+        explanation: "Not correct. Syntax is fixed."
+      - id: b
+        text: "The client secrets."
+        explanation: "Correct. A shared secret is a leak in one of them."
+      - id: c
+        text: "The realm structure."
+        explanation: "Not correct. The structure is the point of the file."
+      - id: d
+        text: "The names of the roles."
+        explanation: "Not correct. Roles stay the same."
+    correct_option: b
+    explanation: "Correct. A shared secret is a leak in one of them."
+
+  - id: ats093-040-q18
+    type: single_choice
+    difficulty: advanced
+    learning_objective: "Understand the key change"
+    source_readings:
+      - sections/section-040/module-02/course-03-migrating-between-environments.md
+    prompt: "After importing a masked export, an application that copied a public key fails. Why?"
+    options:
+      - id: a
+        text: "The sessions were exported."
+        explanation: "Not correct. Sessions are not exported."
+      - id: b
+        text: "The new realm generated new signing keys."
+        explanation: "Correct. Applications that read `jwks_uri` follow along."
+      - id: c
+        text: "The export contained the old keys."
+        explanation: "Not correct. Private keys are masked."
+      - id: d
+        text: "The import removed the clients."
+        explanation: "Not correct. Clients are imported."
+    correct_option: b
+    explanation: "Correct. Applications that read `jwks_uri` follow along."
+
+  - id: ats093-040-q19
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Plan upgrade changes"
+    source_readings:
+      - sections/section-040/module-02/course-04-planning-an-upgrade.md
+    prompt: "Which upgrade type needs a window with no service?"
+    options:
+      - id: a
+        text: "A scale from two to three instances."
+        explanation: "Not correct. Scaling does not migrate."
+      - id: b
+        text: "A minor or major release that changes the schema."
+        explanation: "Correct. Plan the window and keep a dump."
+      - id: c
+        text: "A patch release rolled with `Auto`."
+        explanation: "Not correct. Patch rolls can be done one at a time."
+      - id: d
+        text: "A change of a label."
+        explanation: "Not correct. A label does not restart."
+    correct_option: b
+    explanation: "Correct. Plan the window and keep a dump."
+
+  - id: ats093-040-q20
+    type: single_choice
+    difficulty: advanced
+    learning_objective: "Use a rehearsal"
+    source_readings:
+      - sections/section-040/module-02/course-04-planning-an-upgrade.md
+    prompt: "What does a rehearsal on a restored copy tell you?"
+    options:
+      - id: a
+        text: "The size of the next release."
+        explanation: "Not correct. It tells nothing about releases."
+      - id: b
+        text: "How long the migration takes, and what breaks."
+        explanation: "Correct. The time is the length of your window."
+      - id: c
+        text: "Which users will sign in tomorrow."
+        explanation: "Not correct. It is not a forecast."
+      - id: d
+        text: "Whether DNS is correct."
+        explanation: "Not correct. DNS is not in the copy."
+    correct_option: b
+    explanation: "Correct. The time is the length of your window."

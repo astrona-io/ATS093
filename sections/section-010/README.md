@@ -11,10 +11,11 @@ This section teaches you to work through the operator. You install it, read what
 - Reading the `Ready` and `HasErrors` conditions, the StatefulSet events and the pod log to find why a deployment does not start.
 - The initial admin Secret the operator creates, and how to use it with `kcadm.sh`.
 - Creating a realm with `KeycloakRealmImport`, why it never updates an existing realm, and how placeholders keep passwords in a Secret.
+- Setting resources, scheduling rules and server options in the `Keycloak` resource, reading a Secret value into an option, and running a custom optimized image.
 
 ## The learning path
 
-The section has one module. It has a landing page, three short parts, a graded lab right after the part it tests, and a summary. The landing page starts the module's playground: a cluster where the operator already runs one working Keycloak with the realm `inventory`.
+The section has three modules. Each has a landing page, short parts, a graded lab right after the part it tests, and a summary. Each landing page starts the module's playground: a cluster where the operator already runs one working Keycloak.
 
 ### 1. Deploy Keycloak With The Operator
 
@@ -22,6 +23,22 @@ The section has one module. It has a landing page, three short parts, a graded l
 2. The Keycloak Custom Resource, followed by the lab **Fix A Keycloak Resource That Never Becomes Ready**
 3. Importing Realms With KeycloakRealmImport
 4. Summary
+
+### 2. Tune The Keycloak Pods With The Operator
+
+1. Resources And Java Memory
+2. Scheduling And Priority
+3. Server Options And Secrets, followed by the lab **Set Resources, Scheduling And Log Format**
+4. Pod Template And Custom Images
+5. Summary
+
+### 3. Manage Realms And Clients Declaratively
+
+1. How A Realm Import Works
+2. Changing A Realm That Exists, followed by the lab **Update A Realm That Was Already Imported**
+3. Client Resources
+4. Configuration Across Environments
+5. Summary
 
 ## Section capstone: Deploy Keycloak And Its Realm With The Operator
 

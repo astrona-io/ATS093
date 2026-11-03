@@ -1,0 +1,50 @@
+# A working Keycloak for this module: one instance on PostgreSQL, HTTP inside
+# the cluster, JSON console log, a spread constraint, a priority class, and
+# one server option whose value is read from a Kubernetes Secret.
+apiVersion: k8s.keycloak.org/v2beta1
+kind: Keycloak
+metadata:
+  name: keycloak
+  namespace: keycloak
+spec:
+  instances: 1
+  db:
+    vendor: postgres
+    host: postgres
+    database: keycloak
+    usernameSecret:
+      name: keycloak-db
+      key: username
+    passwordSecret:
+      name: keycloak-db
+      key: password
+  http:
+    httpEnabled: true
+  hostname:
+    hostname: http://keycloak-service:8080
+  ingress:
+    enabled: false
+  additionalOptions:
+    - name: health-enabled
+      value: "true"
+    - name: metrics-enabled
+      value: "true"
+    - name: log-console-output
+      value: json
+    - name: log-level
+      value: INFO
+  scheduling:
+    priorityClassName: system-cluster-critical
+    topologySpreadConstraints:
+      - maxSkew: 1
+        topologyKey: kubernetes.io/hostname
+        whenUnsatisfiable: ScheduleAnyway
+        labelSelector:
+          matchLabels:
+            app: keycloak
+  resources:
+    requests:
+      memory: 768Mi
+      cpu: 250m
+    limits:
+      memory: 1536Mi

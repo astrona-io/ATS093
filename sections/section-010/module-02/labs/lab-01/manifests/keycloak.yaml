@@ -1,0 +1,35 @@
+# The Keycloak resource this lab starts from. It is valid and the API server
+# accepts it, but the memory request is larger than the node has, so the pod
+# stays Pending. The console log is not JSON and there is no spread constraint.
+apiVersion: k8s.keycloak.org/v2beta1
+kind: Keycloak
+metadata:
+  name: keycloak
+  namespace: keycloak
+spec:
+  instances: 1
+  db:
+    vendor: postgres
+    host: postgres
+    database: keycloak
+    usernameSecret:
+      name: keycloak-db
+      key: username
+    passwordSecret:
+      name: keycloak-db
+      key: password
+  http:
+    httpEnabled: true
+  hostname:
+    hostname: http://keycloak-service:8080
+  ingress:
+    enabled: false
+  additionalOptions:
+    - name: health-enabled
+      value: "true"
+  resources:
+    requests:
+      memory: 64Gi
+      cpu: 250m
+    limits:
+      memory: 64Gi

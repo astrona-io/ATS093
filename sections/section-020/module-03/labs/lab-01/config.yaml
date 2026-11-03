@@ -1,0 +1,52 @@
+# Fix The Disruption Budget Lab
+# Astrona graded lab. Schema: internal/config.LabConfig.
+
+metadata:
+  name: "ats-093-lab-020-03-01"
+  docs:
+    guide: "solution.md"
+    solution: "solution.md"
+    question: "question.md"
+    examQuestion: "question.md"
+    prerequisites: "prerequisites.md"
+bootstrap:
+  init:
+    - name: "install-operator"
+      description: "Installs the Keycloak Operator 26.8.1, PostgreSQL and the tester pod in the namespace keycloak"
+      type: "file"
+      source: "bootstrap/01-install-operator.sh"
+    - name: "ats-093-lab-020-03-01-setup"
+      description: "Starts a two-instance Keycloak with a budget that blocks every eviction"
+      type: "file"
+      source: "bootstrap/02-seed-state.sh"
+testing:
+  init:
+    - name: "wait-for-keycloak"
+      description: "Waits for the operator and PostgreSQL before the reference solution runs"
+      type: "file"
+      source: "testing/wait-for-keycloak.sh"
+    - name: "reference-solution"
+      description: "The remediation a correct learner performs; used by `astrona test`"
+      type: "file"
+      source: "solution/apply.sh"
+validation:
+  scripts:
+    - name: "validate-budget-allows-one"
+      description: "Confirms the budget covers both pods and allows one disruption"
+      type: "file"
+      source: "validation/validate-budget-allows-one.sh"
+    - name: "validate-budget-keeps-one-pod"
+      description: "Confirms the budget keeps at least one pod available"
+      type: "file"
+      source: "validation/validate-budget-keeps-one-pod.sh"
+    - name: "validate-keycloak-untouched"
+      description: "Confirms two ready instances and a working sign-in for alice"
+      type: "file"
+      source: "validation/validate-keycloak-untouched.sh"
+teardown:
+  keepCluster: false
+runtime:
+  kind:
+    preloadImages:
+      - nicolaka/netshoot:v0.13
+      - postgres:17-alpine

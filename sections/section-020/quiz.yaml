@@ -244,3 +244,462 @@ questions:
     correct_option: d
     explanation: "Correct. Each pod then runs alone and no invalidation messages cross."
 
+  - id: ats093-020-q11
+    type: single_choice
+    difficulty: beginner
+    learning_objective: "Name the default size of a local cache"
+    source_readings:
+      - sections/section-020/module-02/course-01-cache-types-and-limits.md
+    prompt: "What is the default limit of the `users` cache?"
+    options:
+      - id: a
+        text: "100,000 entries in the cluster."
+        explanation: "Not correct. The limit counts per node."
+      - id: b
+        text: "10,000 entries per node."
+        explanation: "Correct. The `keys` cache is the one with 1,000 entries."
+      - id: c
+        text: "1,000 entries per node."
+        explanation: "Not correct. 1,000 is the default of the `keys` cache."
+      - id: d
+        text: "Unlimited."
+        explanation: "Not correct. All local caches have a default limit."
+    correct_option: b
+    explanation: "Correct. The `keys` cache is the one with 1,000 entries."
+
+  - id: ats093-020-q12
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Build a cache option name"
+    source_readings:
+      - sections/section-020/module-02/course-01-cache-types-and-limits.md
+    prompt: "Which option bounds the cache `offlineSessions`?"
+    options:
+      - id: a
+        text: "`spi-cache-embedded--offline--max`"
+        explanation: "Not correct. That is not a cache option."
+      - id: b
+        text: "`cache-embedded-offline-sessions-max-count`"
+        explanation: "Correct. The cache name is lower case with dashes."
+      - id: c
+        text: "`cache-embedded-offlineSessions-max-count`"
+        explanation: "Not correct. The name is not written in camel case."
+      - id: d
+        text: "`cache-offline-sessions-limit`"
+        explanation: "Not correct. That option does not exist."
+    correct_option: b
+    explanation: "Correct. The cache name is lower case with dashes."
+
+  - id: ats093-020-q13
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Know which caches cannot be bounded"
+    source_readings:
+      - sections/section-020/module-02/course-01-cache-types-and-limits.md
+    prompt: "On which cache can you NOT set a maximum count?"
+    options:
+      - id: a
+        text: "`offline-sessions`"
+        explanation: "Not correct. Offline sessions can be bounded."
+      - id: b
+        text: "`actionTokens`"
+        explanation: "Correct. Also `authenticationSessions` and `work`."
+      - id: c
+        text: "`users`"
+        explanation: "Not correct. `users` can be bounded."
+      - id: d
+        text: "`realms`"
+        explanation: "Not correct. `realms` can be bounded."
+    correct_option: b
+    explanation: "Correct. Also `authenticationSessions` and `work`."
+
+  - id: ats093-020-q14
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Understand what a limit counts"
+    source_readings:
+      - sections/section-020/module-02/course-01-cache-types-and-limits.md
+    prompt: "Two pods each limit `users` to 2,000 entries. How many user entries can the cluster hold in its local caches?"
+    options:
+      - id: a
+        text: "Unlimited, because the limit is a hint."
+        explanation: "Not correct. Infinispan evicts entries at the limit."
+      - id: b
+        text: "Up to 4,000, because each pod has its own copy."
+        explanation: "Correct. The limit is per node."
+      - id: c
+        text: "2,000, shared by both pods."
+        explanation: "Not correct. Local caches are not shared."
+      - id: d
+        text: "1,000 on each pod."
+        explanation: "Not correct. The limit is not divided."
+    correct_option: b
+    explanation: "Correct. The limit is per node."
+
+  - id: ats093-020-q15
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Know the supported way to change cache defaults"
+    source_readings:
+      - sections/section-020/module-02/course-01-cache-types-and-limits.md
+    prompt: "What is the supported way to change a default cache setting?"
+    options:
+      - id: a
+        text: "Delete the cache in the database."
+        explanation: "Not correct. Caches are not stored in the database."
+      - id: b
+        text: "A `cache-` option."
+        explanation: "Correct. XML overrides are possible but not supported."
+      - id: c
+        text: "Edit `cache-ispn.xml` in the image."
+        explanation: "Not correct. Overriding the XML is not supported."
+      - id: d
+        text: "Patch the StatefulSet."
+        explanation: "Not correct. Pod edits are overwritten by the operator."
+    correct_option: b
+    explanation: "Correct. XML overrides are possible but not supported."
+
+  - id: ats093-020-q16
+    type: single_choice
+    difficulty: beginner
+    learning_objective: "Explain persistent user sessions"
+    source_readings:
+      - sections/section-020/module-02/course-02-sessions-in-memory-and-in-the-database.md
+    prompt: "With persistent user sessions, where is the source of truth for a user session?"
+    options:
+      - id: a
+        text: "The browser cookie."
+        explanation: "Not correct. The cookie only points at the session."
+      - id: b
+        text: "The database."
+        explanation: "Correct. The caches are loaded on demand."
+      - id: c
+        text: "The `sessions` cache."
+        explanation: "Not correct. The cache is a copy."
+      - id: d
+        text: "The pod that created it."
+        explanation: "Not correct. Other pods read the session as well."
+    correct_option: b
+    explanation: "Correct. The caches are loaded on demand."
+
+  - id: ats093-020-q17
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Weigh disabling session caching"
+    source_readings:
+      - sections/section-020/module-02/course-02-sessions-in-memory-and-in-the-database.md
+    prompt: "What is the main cost of setting `spi-user-sessions--infinispan--use-caches=false`?"
+    options:
+      - id: a
+        text: "Tokens can no longer be refreshed."
+        explanation: "Not correct. Refresh still works."
+      - id: b
+        text: "More database reads and connections."
+        explanation: "Correct. Every session read goes to the database."
+      - id: c
+        text: "Sessions are lost on restart."
+        explanation: "Not correct. The sessions stay in the database."
+      - id: d
+        text: "The cluster cannot form."
+        explanation: "Not correct. Discovery is not changed."
+    correct_option: b
+    explanation: "Correct. Every session read goes to the database."
+
+  - id: ats093-020-q18
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Recognise a deprecated mode"
+    source_readings:
+      - sections/section-020/module-02/course-02-sessions-in-memory-and-in-the-database.md
+    prompt: "What does `--features-disabled=persistent-user-sessions` do, and what is its status?"
+    options:
+      - id: a
+        text: "It disables the caches; it is required for multi-site."
+        explanation: "Not correct. It is not required."
+      - id: b
+        text: "It keeps sessions in memory only; it is deprecated."
+        explanation: "Correct. Remove the setting."
+      - id: c
+        text: "It keeps sessions in the database; it is the default."
+        explanation: "Not correct. That is the default without the setting."
+      - id: d
+        text: "It turns off offline tokens; it is supported."
+        explanation: "Not correct. Offline tokens are not turned off."
+    correct_option: b
+    explanation: "Correct. Remove the setting."
+
+  - id: ats093-020-q19
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Name the discovery of the default stack"
+    source_readings:
+      - sections/section-020/module-02/course-03-cluster-transport-and-its-security.md
+    prompt: "How do pods discover each other with the default `jdbc-ping` stack?"
+    options:
+      - id: a
+        text: "They read a ConfigMap."
+        explanation: "Not correct. No ConfigMap is involved."
+      - id: b
+        text: "They register in a table of the Keycloak database."
+        explanation: "Correct. No extra service is needed."
+      - id: c
+        text: "They use IP multicast."
+        explanation: "Not correct. Multicast is for the deprecated stacks."
+      - id: d
+        text: "They query the Kubernetes API."
+        explanation: "Not correct. The kubernetes stack uses DNS and is deprecated."
+    correct_option: b
+    explanation: "Correct. No extra service is needed."
+
+  - id: ats093-020-q20
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Diagnose a mesh problem"
+    source_readings:
+      - sections/section-020/module-02/course-03-cluster-transport-and-its-security.md
+    prompt: "The log shows `JGRP000006: failed accepting connection from peer SSLSocket` after the cluster is placed in a service mesh. What is the likely cause?"
+    options:
+      - id: a
+        text: "The realm import failed."
+        explanation: "Not correct. The import is not involved."
+      - id: b
+        text: "The mesh interferes with the mutual TLS between the Keycloak pods."
+        explanation: "Correct. Allow direct mTLS on port 7800 or rely on the mesh."
+      - id: c
+        text: "The database password is wrong."
+        explanation: "Not correct. A wrong password fails the database connection."
+      - id: d
+        text: "The cache limits are too low."
+        explanation: "Not correct. Limits do not affect the handshake."
+    correct_option: b
+    explanation: "Correct. Allow direct mTLS on port 7800 or rely on the mesh."
+
+  - id: ats093-020-q21
+    type: single_choice
+    difficulty: beginner
+    learning_objective: "Separate disruption kinds"
+    source_readings:
+      - sections/section-020/module-03/course-01-planned-and-unplanned-disruption.md
+    prompt: "Which event can a `PodDisruptionBudget` stop?"
+    options:
+      - id: a
+        text: "A node losing power."
+        explanation: "Not correct. That is involuntary."
+      - id: b
+        text: "A pod killed for running out of memory."
+        explanation: "Not correct. That is involuntary."
+      - id: c
+        text: "A network link breaking."
+        explanation: "Not correct. That is involuntary."
+      - id: d
+        text: "A node drain that evicts a pod."
+        explanation: "Correct. Drains use the eviction API."
+    correct_option: d
+    explanation: "Correct. Drains use the eviction API."
+
+  - id: ats093-020-q22
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Read a budget"
+    source_readings:
+      - sections/section-020/module-03/course-01-planned-and-unplanned-disruption.md
+    prompt: "Two Keycloak pods, budget `minAvailable: 2`. What does `ALLOWED DISRUPTIONS` show?"
+    options:
+      - id: a
+        text: "1"
+        explanation: "Not correct. That would leave one pod."
+      - id: b
+        text: "2"
+        explanation: "Not correct. Two pods are the whole set."
+      - id: c
+        text: "Unlimited"
+        explanation: "Not correct. The budget limits it."
+      - id: d
+        text: "0"
+        explanation: "Correct. Evicting a pod would go below the minimum."
+    correct_option: d
+    explanation: "Correct. Evicting a pod would go below the minimum."
+
+  - id: ats093-020-q23
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Choose a safe rule"
+    source_readings:
+      - sections/section-020/module-03/course-01-planned-and-unplanned-disruption.md
+    prompt: "Which budget rule for a two-pod cluster lets a drain proceed one pod at a time?"
+    options:
+      - id: a
+        text: "`minAvailable: 2`"
+        explanation: "Not correct. It blocks every eviction."
+      - id: b
+        text: "`maxUnavailable: 0`"
+        explanation: "Not correct. It blocks every eviction."
+      - id: c
+        text: "Both `minAvailable: 1` and `maxUnavailable: 1`"
+        explanation: "Not correct. A budget accepts only one of the two fields."
+      - id: d
+        text: "`maxUnavailable: 1`"
+        explanation: "Correct. One pod may be missing."
+    correct_option: d
+    explanation: "Correct. One pod may be missing."
+
+  - id: ats093-020-q24
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Spot a budget that protects nothing"
+    source_readings:
+      - sections/section-020/module-03/course-01-planned-and-unplanned-disruption.md
+    prompt: "A budget shows `expectedPods` of 0. What is wrong?"
+    options:
+      - id: a
+        text: "The pods are not Ready."
+        explanation: "Not correct. Pods that are not Ready still count as expected."
+      - id: b
+        text: "The budget is too strict."
+        explanation: "Not correct. A strict budget still counts pods."
+      - id: c
+        text: "The cluster has no database."
+        explanation: "Not correct. The database is not involved."
+      - id: d
+        text: "The selector matches no pods."
+        explanation: "Correct. Take the labels from the StatefulSet."
+    correct_option: d
+    explanation: "Correct. Take the labels from the StatefulSet."
+
+  - id: ats093-020-q25
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Choose a spread key"
+    source_readings:
+      - sections/section-020/module-03/course-02-spreading-the-pods.md
+    prompt: "Which `topologyKey` spreads pods over nodes?"
+    options:
+      - id: a
+        text: "`topology.kubernetes.io/zone`"
+        explanation: "Not correct. That spreads over zones."
+      - id: b
+        text: "`node.kubernetes.io/instance-type`"
+        explanation: "Not correct. That groups by machine type."
+      - id: c
+        text: "`app`"
+        explanation: "Not correct. That is a label, not a topology key."
+      - id: d
+        text: "`kubernetes.io/hostname`"
+        explanation: "Correct. Use the zone key to spread over zones."
+    correct_option: d
+    explanation: "Correct. Use the zone key to spread over zones."
+
+  - id: ats093-020-q26
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Explain preferred anti-affinity"
+    source_readings:
+      - sections/section-020/module-03/course-02-spreading-the-pods.md
+    prompt: "What does `preferredDuringSchedulingIgnoredDuringExecution` do when no other node fits?"
+    options:
+      - id: a
+        text: "The pod stays Pending."
+        explanation: "Not correct. That is the `required` form."
+      - id: b
+        text: "The pod is deleted."
+        explanation: "Not correct. Pods are not deleted by a preference."
+      - id: c
+        text: "The existing pod is evicted."
+        explanation: "Not correct. Nothing is evicted."
+      - id: d
+        text: "The scheduler puts the pod on the same node."
+        explanation: "Correct. The rule is a preference."
+    correct_option: d
+    explanation: "Correct. The rule is a preference."
+
+  - id: ats093-020-q27
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Name the scale field"
+    source_readings:
+      - sections/section-020/module-03/course-03-scaling-keycloak.md
+    prompt: "Which field does `kubectl scale keycloak keycloak --replicas=3` change?"
+    options:
+      - id: a
+        text: "`spec.replicas`"
+        explanation: "Not correct. The resource has no such field."
+      - id: b
+        text: "`spec.db.poolMaxSize`"
+        explanation: "Not correct. That is the pool size."
+      - id: c
+        text: "`spec.scheduling`"
+        explanation: "Not correct. That is placement."
+      - id: d
+        text: "`spec.instances`"
+        explanation: "Correct. The scale interface maps to it."
+    correct_option: d
+    explanation: "Correct. The scale interface maps to it."
+
+  - id: ats093-020-q28
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Count the database connections"
+    source_readings:
+      - sections/section-020/module-03/course-03-scaling-keycloak.md
+    prompt: "Each Keycloak pod may open 100 database connections and you scale to four pods. How many connections can the database see from Keycloak?"
+    options:
+      - id: a
+        text: "100"
+        explanation: "Not correct. The pool is per pod."
+      - id: b
+        text: "Up to 25"
+        explanation: "Not correct. The pool is not divided."
+      - id: c
+        text: "Exactly 4"
+        explanation: "Not correct. A pool holds many connections."
+      - id: d
+        text: "Up to 400."
+        explanation: "Correct. Check `max_connections` before scaling."
+    correct_option: d
+    explanation: "Correct. Check `max_connections` before scaling."
+
+  - id: ats093-020-q29
+    type: single_choice
+    difficulty: beginner
+    learning_objective: "Describe a graceful stop"
+    source_readings:
+      - sections/section-020/module-03/course-04-graceful-shutdown-and-multi-site.md
+    prompt: "What does Keycloak do when its pod receives the termination signal?"
+    options:
+      - id: a
+        text: "It exits at once."
+        explanation: "Not correct. It finishes its requests."
+      - id: b
+        text: "It waits for a new pod to take its sessions."
+        explanation: "Not correct. It does not wait for a replacement."
+      - id: c
+        text: "It deletes its cache entries from the database."
+        explanation: "Not correct. Sessions are in the database already."
+      - id: d
+        text: "It finishes the requests in progress and then exits."
+        explanation: "Correct. If the grace period ends first, Kubernetes kills it."
+    correct_option: d
+    explanation: "Correct. If the grace period ends first, Kubernetes kills it."
+
+  - id: ats093-020-q30
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Know the multi-site limit"
+    source_readings:
+      - sections/section-020/module-03/course-04-graceful-shutdown-and-multi-site.md
+    prompt: "What does a multi-site design add to a single cluster?"
+    options:
+      - id: a
+        text: "A larger heap on each pod."
+        explanation: "Not correct. Heap size is unrelated."
+      - id: b
+        text: "A second operator in the same namespace."
+        explanation: "Not correct. An operator does not give site failover."
+      - id: c
+        text: "A PodDisruptionBudget for each site."
+        explanation: "Not correct. A budget covers one cluster."
+      - id: d
+        text: "An external Infinispan for state that must cross sites, and a tested failover."
+        explanation: "Correct. The database must also work across sites."
+    correct_option: d
+    explanation: "Correct. The database must also work across sites."

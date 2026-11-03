@@ -14,7 +14,7 @@ This section makes backup and restore a routine you have done before you need it
 
 ## The learning path
 
-The section has one module. It has a landing page, three short parts, a graded lab right after the part it tests, and a summary. The landing page starts the module's playground: Keycloak with two instances on PostgreSQL, and a realm worth keeping.
+The section has two modules. Each has a landing page that starts its playground, short parts, a graded lab right after the part it tests, and a summary. The first module has Keycloak with two instances on PostgreSQL and a realm worth keeping.
 
 ### 1. Back Up, Restore And Upgrade Keycloak
 
@@ -22,6 +22,14 @@ The section has one module. It has a landing page, three short parts, a graded l
 2. Dump And Restore The Database, followed by the lab **Restore Keycloak From A Database Dump**
 3. Upgrading Keycloak With The Operator
 4. Summary
+
+### 2. Export, Import And Migrate Realms
+
+1. The Ways To Export And Import
+2. Working With The Export File, followed by the lab **Export A Realm For Reuse**
+3. Migrating Between Environments
+4. Planning An Upgrade
+5. Summary
 
 ## Section capstone: Recover After A Failed Upgrade
 

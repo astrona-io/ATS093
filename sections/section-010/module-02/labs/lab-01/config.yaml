@@ -1,0 +1,56 @@
+# Set Resources, Scheduling And Log Format Lab
+# Astrona graded lab. Schema: internal/config.LabConfig.
+
+metadata:
+  name: "ats-093-lab-010-02-01"
+  docs:
+    guide: "solution.md"
+    solution: "solution.md"
+    question: "question.md"
+    examQuestion: "question.md"
+    prerequisites: "prerequisites.md"
+bootstrap:
+  init:
+    - name: "install-operator"
+      description: "Installs the Keycloak Operator 26.8.1, PostgreSQL and the tester pod in the namespace keycloak"
+      type: "file"
+      source: "bootstrap/01-install-operator.sh"
+    - name: "ats-093-lab-010-02-01-setup"
+      description: "Applies a Keycloak resource whose memory request no node can give"
+      type: "file"
+      source: "bootstrap/02-seed-state.sh"
+testing:
+  init:
+    - name: "wait-for-keycloak"
+      description: "Waits for the operator and PostgreSQL before the reference solution runs"
+      type: "file"
+      source: "testing/wait-for-keycloak.sh"
+    - name: "reference-solution"
+      description: "The remediation a correct learner performs; used by `astrona test`"
+      type: "file"
+      source: "solution/apply.sh"
+validation:
+  scripts:
+    - name: "validate-keycloak-ready"
+      description: "Confirms the Keycloak resource is Ready with one ready pod"
+      type: "file"
+      source: "validation/validate-keycloak-ready.sh"
+    - name: "validate-resources"
+      description: "Confirms the Keycloak pod requests 768Mi and 250m and has a memory limit of 1536Mi"
+      type: "file"
+      source: "validation/validate-resources.sh"
+    - name: "validate-spread"
+      description: "Confirms the pod carries a topology spread constraint from the Keycloak resource"
+      type: "file"
+      source: "validation/validate-spread.sh"
+    - name: "validate-json-log"
+      description: "Confirms the Keycloak console log is written as JSON"
+      type: "file"
+      source: "validation/validate-json-log.sh"
+teardown:
+  keepCluster: false
+runtime:
+  kind:
+    preloadImages:
+      - nicolaka/netshoot:v0.13
+      - postgres:17-alpine

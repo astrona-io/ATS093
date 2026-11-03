@@ -1,0 +1,121 @@
+# Starting workloads for every ATS093 environment, in the namespace the
+# Keycloak Operator watches: PostgreSQL 17, the database and realm Secrets,
+# and a tester client pod with curl and jq. The operator itself is installed
+# by the bootstrap script from the keycloak-k8s-resources 26.8.1 manifests.
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: keycloak
+---
+# Database user for Keycloak. Lab-only credentials.
+apiVersion: v1
+kind: Secret
+metadata:
+  name: keycloak-db
+  namespace: keycloak
+type: Opaque
+stringData:
+  username: keycloak
+  password: keycloak-db-password
+---
+# Values the realm import puts into the realm through placeholders.
+apiVersion: v1
+kind: Secret
+metadata:
+  name: inventory-secrets
+  namespace: keycloak
+type: Opaque
+stringData:
+  alice-password: alice-password
+  bob-password: bob-password
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres
+  namespace: keycloak
+  labels:
+    app: postgres
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: postgres
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:17-alpine
+          env:
+            - name: POSTGRES_DB
+              value: keycloak
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: keycloak-db
+                  key: username
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: keycloak-db
+                  key: password
+            - name: PGDATA
+              value: /var/lib/postgresql/data/pgdata
+          ports:
+            - name: postgres
+              containerPort: 5432
+          readinessProbe:
+            exec:
+              command: ["pg_isready", "-U", "keycloak", "-d", "keycloak"]
+            periodSeconds: 5
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/postgresql/data
+            - name: backup
+              mountPath: /backup
+      volumes:
+        # emptyDir: the data lives as long as this pod. Enough for a lab.
+        - name: data
+          emptyDir: {}
+        - name: backup
+          emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres
+  namespace: keycloak
+spec:
+  selector:
+    app: postgres
+  ports:
+    - name: postgres
+      port: 5432
+      targetPort: postgres
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tester
+  namespace: keycloak
+  labels:
+    app: tester
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tester
+  template:
+    metadata:
+      labels:
+        app: tester
+    spec:
+      containers:
+        - name: tester
+          image: nicolaka/netshoot:v0.13
+          command: ["sh", "-c", "while true; do sleep 30; done"]

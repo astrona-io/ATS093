@@ -1,0 +1,52 @@
+# Find Why Keycloak Does Not Start Lab
+# Astrona graded lab. Schema: internal/config.LabConfig.
+
+metadata:
+  name: "ats-093-lab-050-02-01"
+  docs:
+    guide: "solution.md"
+    solution: "solution.md"
+    question: "question.md"
+    examQuestion: "question.md"
+    prerequisites: "prerequisites.md"
+bootstrap:
+  init:
+    - name: "install-operator"
+      description: "Installs the Keycloak Operator 26.8.1, PostgreSQL and the tester pod in the namespace keycloak"
+      type: "file"
+      source: "bootstrap/01-install-operator.sh"
+    - name: "ats-093-lab-050-02-01-setup"
+      description: "Applies a Keycloak resource that cannot start"
+      type: "file"
+      source: "bootstrap/02-seed-state.sh"
+testing:
+  init:
+    - name: "wait-for-keycloak"
+      description: "Waits for the operator and PostgreSQL before the reference solution runs"
+      type: "file"
+      source: "testing/wait-for-keycloak.sh"
+    - name: "reference-solution"
+      description: "The remediation a correct learner performs; used by `astrona test`"
+      type: "file"
+      source: "solution/apply.sh"
+validation:
+  scripts:
+    - name: "validate-keycloak-ready"
+      description: "Confirms the Keycloak resource is Ready and the pod is running"
+      type: "file"
+      source: "validation/validate-keycloak-ready.sh"
+    - name: "validate-db-settings"
+      description: "Confirms the database name and the password Secret key are correct and the host is unchanged"
+      type: "file"
+      source: "validation/validate-db-settings.sh"
+    - name: "validate-health"
+      description: "Confirms /health/ready on the management port returns 200"
+      type: "file"
+      source: "validation/validate-health.sh"
+teardown:
+  keepCluster: false
+runtime:
+  kind:
+    preloadImages:
+      - nicolaka/netshoot:v0.13
+      - postgres:17-alpine

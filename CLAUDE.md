@@ -220,8 +220,8 @@ section is only true for this one.
   failed upgrade). Every explanation should lead to a command they can run,
   and every fix should be proved with a real request: a token, a discovery
   document through the proxy, a metric, or a realm that is back.
-- **The four topics:** the Keycloak Operator, the database and clustering,
-  edge security, and backup, restore and upgrades. The README table maps each
+- **The five topics:** the Keycloak Operator, the database and clustering,
+  edge security, backup, restore and upgrades, and observability. The README table maps each
   section to its topic.
 - **The sections:**
 
@@ -231,6 +231,7 @@ section is only true for this one.
   | 020 | Databases And Clustering | Database and clustering |
   | 030 | Edge Security | TLS termination, exposure, brute force, rate limiting |
   | 040 | Backup, Restore And Upgrades | Backup, restore and upgrades |
+  | 050 | Observability And Troubleshooting | Health, metrics, logs, events, tracing |
 
 - **The version:** everything is written for the **Keycloak Operator 26.8.1**
   and **Keycloak 26.8.1** (`quay.io/keycloak/keycloak-operator:26.8.1`,

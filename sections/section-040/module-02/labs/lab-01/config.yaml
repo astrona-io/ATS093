@@ -1,0 +1,52 @@
+# Export A Realm For Reuse Lab
+# Astrona graded lab. Schema: internal/config.LabConfig.
+
+metadata:
+  name: "ats-093-lab-040-02-01"
+  docs:
+    guide: "solution.md"
+    solution: "solution.md"
+    question: "question.md"
+    examQuestion: "question.md"
+    prerequisites: "prerequisites.md"
+bootstrap:
+  init:
+    - name: "install-operator"
+      description: "Installs the Keycloak Operator 26.8.1, PostgreSQL and the tester pod in the namespace keycloak"
+      type: "file"
+      source: "bootstrap/01-install-operator.sh"
+    - name: "ats-093-lab-040-02-01-setup"
+      description: "Starts Keycloak and imports the realm inventory with a role, a group and two clients"
+      type: "file"
+      source: "bootstrap/02-seed-state.sh"
+testing:
+  init:
+    - name: "wait-for-keycloak"
+      description: "Waits for the operator and PostgreSQL before the reference solution runs"
+      type: "file"
+      source: "testing/wait-for-keycloak.sh"
+    - name: "reference-solution"
+      description: "The remediation a correct learner performs; used by `astrona test`"
+      type: "file"
+      source: "solution/apply.sh"
+validation:
+  scripts:
+    - name: "validate-export-content"
+      description: "Confirms the export file contains the realm, both clients, the role auditor and the group ops"
+      type: "file"
+      source: "validation/validate-export-content.sh"
+    - name: "validate-secret-placeholder"
+      description: "Confirms the secret of inventory-api is the placeholder and no mask or real secret remains"
+      type: "file"
+      source: "validation/validate-secret-placeholder.sh"
+    - name: "validate-realm-intact"
+      description: "Confirms the realm inventory still has alice and bob and alice still gets a token"
+      type: "file"
+      source: "validation/validate-realm-intact.sh"
+teardown:
+  keepCluster: false
+runtime:
+  kind:
+    preloadImages:
+      - nicolaka/netshoot:v0.13
+      - postgres:17-alpine

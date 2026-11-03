@@ -8,7 +8,7 @@ You know Kubernetes well: Deployments, StatefulSets, Services, Secrets, ConfigMa
 
 ## What you can do at the end
 
-Running Keycloak in production is work you do on a live cluster, so this course does not ask you to remember words. It asks you to deploy Keycloak, break and fix it, and prove each fix with a real request. The course has four topics, and each one turns into a set of skills you will practise.
+Running Keycloak in production is work you do on a live cluster, so this course does not ask you to remember words. It asks you to deploy Keycloak, break and fix it, and prove each fix with a real request. The course has five topics, and each one turns into a set of skills you will practise.
 
 The first topic is **the Keycloak Operator**. You will learn to:
 
@@ -31,6 +31,12 @@ The fourth topic is **backup, restore and upgrades**. You will learn to:
 
 - Dump the database and restore it next to a damaged one.
 - Upgrade Keycloak with the operator's update strategies, and roll back a failed upgrade.
+- Export a realm, keep it free of secrets, and rehearse an upgrade on a copy.
+
+The fifth topic is **observability and troubleshooting**. You will learn to:
+
+- Read health, metrics and JSON logs, and choose the few signals worth an alert.
+- Record login events, trace a request, and find out why a Keycloak does not start.
 
 Everything is written for the **Keycloak Operator 26.8.1** and **Keycloak 26.8.1**.
 
@@ -57,7 +63,7 @@ Inside Keycloak, the pages use the same names everywhere. The application realm 
 
 ## How the course is laid out
 
-The course has four sections. It starts with deploying Keycloak through the operator, then makes it a cluster, then protects its edge, and ends with keeping its data safe across failures and upgrades.
+The course has five sections. It starts with deploying Keycloak through the operator, then makes it a cluster, then protects its edge, then keeps its data safe across failures and upgrades, and ends with making it observable.
 
 | Section | What it covers |
 | --- | --- |
@@ -65,6 +71,7 @@ The course has four sections. It starts with deploying Keycloak through the oper
 | 020 | Databases And Clustering |
 | 030 | Edge Security |
 | 040 | Backup, Restore And Upgrades |
+| 050 | Observability And Troubleshooting |
 
 Each section has one or more **modules**, and each module teaches one skill. A module brings together four kinds of material:
 

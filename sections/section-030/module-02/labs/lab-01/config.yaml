@@ -1,0 +1,53 @@
+# Replace The Edge Certificate Lab
+# Astrona graded lab. Schema: internal/config.LabConfig.
+
+metadata:
+  name: "ats-093-lab-030-02-01"
+  docs:
+    guide: "solution.md"
+    solution: "solution.md"
+    question: "question.md"
+    examQuestion: "question.md"
+    prerequisites: "prerequisites.md"
+bootstrap:
+  init:
+    - name: "install-operator"
+      description: "Installs the Keycloak Operator 26.8.1, PostgreSQL and the tester pod in the namespace keycloak"
+      type: "file"
+      source: "bootstrap/01-install-operator.sh"
+    - name: "ats-093-lab-030-02-01-setup"
+      description: "Starts Keycloak behind nginx with a certificate for the wrong name"
+      type: "file"
+      source: "bootstrap/02-seed-state.sh"
+testing:
+  init:
+    - name: "wait-for-keycloak"
+      description: "Waits for the operator and PostgreSQL before the reference solution runs"
+      type: "file"
+      source: "testing/wait-for-keycloak.sh"
+    - name: "reference-solution"
+      description: "The remediation a correct learner performs; used by `astrona test`"
+      type: "file"
+      source: "solution/apply.sh"
+validation:
+  scripts:
+    - name: "validate-certificate-name"
+      description: "Confirms the served certificate has the alternative name keycloak.localtest.me"
+      type: "file"
+      source: "validation/validate-certificate-name.sh"
+    - name: "validate-certificate-lifetime"
+      description: "Confirms the served certificate does not expire within 90 days"
+      type: "file"
+      source: "validation/validate-certificate-lifetime.sh"
+    - name: "validate-secret-is-served"
+      description: "Confirms nginx was restarted with the certificate of the Secret, and Keycloak still works"
+      type: "file"
+      source: "validation/validate-secret-is-served.sh"
+teardown:
+  keepCluster: false
+runtime:
+  kind:
+    preloadImages:
+      - nicolaka/netshoot:v0.13
+      - postgres:17-alpine
+      - nginx:1.27-alpine

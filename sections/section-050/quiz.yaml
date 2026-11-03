@@ -1,0 +1,476 @@
+# Knowledge check for section 050. Listed in astrona.yaml as a `type: quiz` entry after the capstone lab.
+schema_version: 1
+kind: question_bank
+id: ats093-050
+course_id: ATS093
+exam_code: KEYCLOAK
+status: draft
+provenance: Original practice material written for this course; not official exam questions.
+scope:
+  type: section
+  id: section-050
+  title: "Observability And Troubleshooting"
+placement:
+  position: after
+  reading: sections/section-050/capstone/labs/lab-01/question.md
+questions:
+
+  - id: ats093-050-q01
+    type: single_choice
+    difficulty: beginner
+    learning_objective: "Tell the probes apart"
+    source_readings:
+      - sections/section-050/module-01/course-01-health-endpoints-and-probes.md
+    prompt: "Which health endpoint should make Kubernetes restart the container?"
+    options:
+      - id: a
+        text: "`/health/ready`"
+        explanation: "Not correct. Readiness only removes the pod from the Service."
+      - id: b
+        text: "`/health/started`"
+        explanation: "Not correct. It marks the end of the start."
+      - id: c
+        text: "`/metrics`"
+        explanation: "Not correct. It is not a health endpoint."
+      - id: d
+        text: "`/health/live`"
+        explanation: "Correct. Liveness means the process is stuck."
+    correct_option: d
+    explanation: "Correct. Liveness means the process is stuck."
+
+  - id: ats093-050-q02
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Know where health is served"
+    source_readings:
+      - sections/section-050/module-01/course-01-health-endpoints-and-probes.md
+    prompt: "On which port are the health endpoints served by default?"
+    options:
+      - id: a
+        text: "The HTTP port, 8080."
+        explanation: "Not correct. That is for users."
+      - id: b
+        text: "The cluster port, 7800."
+        explanation: "Not correct. That is for the cache transport."
+      - id: c
+        text: "The database port, 5432."
+        explanation: "Not correct. That is PostgreSQL."
+      - id: d
+        text: "The management port, 9000."
+        explanation: "Correct. It is kept apart from user traffic."
+    correct_option: d
+    explanation: "Correct. It is kept apart from user traffic."
+
+  - id: ats093-050-q03
+    type: single_choice
+    difficulty: advanced
+    learning_objective: "Avoid a restart storm"
+    source_readings:
+      - sections/section-050/module-01/course-01-health-endpoints-and-probes.md
+    prompt: "Why should readiness not be used to decide a restart?"
+    options:
+      - id: a
+        text: "It answers too slowly."
+        explanation: "Not correct. Speed is not the reason."
+      - id: b
+        text: "It is served on a different port."
+        explanation: "Not correct. The port is the same."
+      - id: c
+        text: "It needs a client certificate."
+        explanation: "Not correct. That is a separate setting."
+      - id: d
+        text: "A short database outage would restart every pod together."
+        explanation: "Correct. Readiness should only remove traffic."
+    correct_option: d
+    explanation: "Correct. Readiness should only remove traffic."
+
+  - id: ats093-050-q04
+    type: single_choice
+    difficulty: beginner
+    learning_objective: "Enable the metrics"
+    source_readings:
+      - sections/section-050/module-01/course-02-metrics-on-the-management-port.md
+    prompt: "Which option makes Keycloak serve `/metrics`?"
+    options:
+      - id: a
+        text: "`health-enabled`"
+        explanation: "Not correct. That is for health."
+      - id: b
+        text: "`log-level`"
+        explanation: "Not correct. That is for logs."
+      - id: c
+        text: "`tracing-enabled`"
+        explanation: "Not correct. That is for traces."
+      - id: d
+        text: "`metrics-enabled`"
+        explanation: "Correct. It is a build option the operator handles."
+    correct_option: d
+    explanation: "Correct. It is a build option the operator handles."
+
+  - id: ats093-050-q05
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Read the pool metrics"
+    source_readings:
+      - sections/section-050/module-01/course-02-metrics-on-the-management-port.md
+    prompt: "Which metric family shows the database connection pool?"
+    options:
+      - id: a
+        text: "`jvm_`"
+        explanation: "Not correct. That is memory and threads."
+      - id: b
+        text: "`http_server_`"
+        explanation: "Not correct. That is requests."
+      - id: c
+        text: "`process_`"
+        explanation: "Not correct. That is the process."
+      - id: d
+        text: "`agroal_`"
+        explanation: "Correct. A pool at its maximum with waiters means a bottleneck."
+    correct_option: d
+    explanation: "Correct. A pool at its maximum with waiters means a bottleneck."
+
+  - id: ats093-050-q06
+    type: single_choice
+    difficulty: advanced
+    learning_objective: "Limit metric series"
+    source_readings:
+      - sections/section-050/module-01/course-02-metrics-on-the-management-port.md
+    prompt: "What happens when you add the tags `clientId` and `idp` to user event metrics?"
+    options:
+      - id: a
+        text: "Counters survive a restart."
+        explanation: "Not correct. Counters reset on restart."
+      - id: b
+        text: "Metrics move to port 8080."
+        explanation: "Not correct. The port is unchanged."
+      - id: c
+        text: "Events are written to the log."
+        explanation: "Not correct. They are separate."
+      - id: d
+        text: "The number of series multiplies."
+        explanation: "Correct. Use them only with few clients."
+    correct_option: d
+    explanation: "Correct. Use them only with few clients."
+
+  - id: ats093-050-q07
+    type: single_choice
+    difficulty: beginner
+    learning_objective: "Set a category level"
+    source_readings:
+      - sections/section-050/module-01/course-03-logs-that-machines-can-read.md
+    prompt: "How do you raise only `org.keycloak.events` to debug?"
+    options:
+      - id: a
+        text: "Set the root level to debug."
+        explanation: "Not correct. That writes everything."
+      - id: b
+        text: "Set the handler level to debug."
+        explanation: "Not correct. A handler can only be quieter."
+      - id: c
+        text: "Enable `health-enabled`."
+        explanation: "Not correct. That is for health."
+      - id: d
+        text: "`log-level` with `INFO,org.keycloak.events:debug`."
+        explanation: "Correct. The root stays at info."
+    correct_option: d
+    explanation: "Correct. The root stays at info."
+
+  - id: ats093-050-q08
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Know what a handler level does"
+    source_readings:
+      - sections/section-050/module-01/course-03-logs-that-machines-can-read.md
+    prompt: "The root level is `info`. What does `log-console-level=debug` show?"
+    options:
+      - id: a
+        text: "All debug records."
+        explanation: "Not correct. The root blocks them."
+      - id: b
+        text: "Only the events."
+        explanation: "Not correct. It is not event specific."
+      - id: c
+        text: "Only errors."
+        explanation: "Not correct. It does not filter to errors."
+      - id: d
+        text: "Nothing new, because the root limits it."
+        explanation: "Correct. A handler cannot be louder than the root."
+    correct_option: d
+    explanation: "Correct. A handler cannot be louder than the root."
+
+  - id: ats093-050-q09
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Choose a log format"
+    source_readings:
+      - sections/section-050/module-01/course-03-logs-that-machines-can-read.md
+    prompt: "Why does a log collector prefer `log-console-output=json`?"
+    options:
+      - id: a
+        text: "It makes the log smaller."
+        explanation: "Not correct. Size is not the point."
+      - id: b
+        text: "It hides personal data."
+        explanation: "Not correct. Content is unchanged."
+      - id: c
+        text: "It sends the log to a file."
+        explanation: "Not correct. The output is still the console."
+      - id: d
+        text: "It reads fields and keeps a stack trace in one record."
+        explanation: "Correct. Fields can be searched."
+    correct_option: d
+    explanation: "Correct. Fields can be searched."
+
+  - id: ats093-050-q10
+    type: single_choice
+    difficulty: advanced
+    learning_objective: "Alert on symptoms"
+    source_readings:
+      - sections/section-050/module-01/course-04-what-to-watch-and-alert-on.md
+    prompt: "Which alert is the better page?"
+    options:
+      - id: a
+        text: "CPU is above 80 percent."
+        explanation: "Not correct. It may harm no one."
+      - id: b
+        text: "A pod was scheduled."
+        explanation: "Not correct. It is not a problem."
+      - id: c
+        text: "The log has a new line."
+        explanation: "Not correct. Logs always grow."
+      - id: d
+        text: "Token requests are slow or failing."
+        explanation: "Correct. It means users are hurt."
+    correct_option: d
+    explanation: "Correct. It means users are hurt."
+
+  - id: ats093-050-q11
+    type: single_choice
+    difficulty: beginner
+    learning_objective: "Choose the right store"
+    source_readings:
+      - sections/section-050/module-02/course-01-events-as-signals.md
+    prompt: "Which store answers who changed a client last night?"
+    options:
+      - id: a
+        text: "Cache metrics."
+        explanation: "Not correct. They describe caches."
+      - id: b
+        text: "Administration events."
+        explanation: "Correct. They record configuration changes."
+      - id: c
+        text: "Login events."
+        explanation: "Not correct. They record sign-ins."
+      - id: d
+        text: "The readiness probe."
+        explanation: "Not correct. It records health."
+    correct_option: b
+    explanation: "Correct. They record configuration changes."
+
+  - id: ats093-050-q12
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Limit the event table"
+    source_readings:
+      - sections/section-050/module-02/course-01-events-as-signals.md
+    prompt: "Why set an expiration on events?"
+    options:
+      - id: a
+        text: "It turns on the listener."
+        explanation: "Not correct. The listener is separate."
+      - id: b
+        text: "They are stored in the database and grow with traffic."
+        explanation: "Correct. Choose the types you save as well."
+      - id: c
+        text: "They cannot be read without it."
+        explanation: "Not correct. They are readable."
+      - id: d
+        text: "It makes them private."
+        explanation: "Not correct. Privacy needs access control."
+    correct_option: b
+    explanation: "Correct. Choose the types you save as well."
+
+  - id: ats093-050-q13
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Use metrics and events together"
+    source_readings:
+      - sections/section-050/module-02/course-01-events-as-signals.md
+    prompt: "How do metrics and events work together?"
+    options:
+      - id: a
+        text: "They cannot be combined."
+        explanation: "Not correct. They complement each other."
+      - id: b
+        text: "A metric notices, an event finds the cause."
+        explanation: "Correct. Use each for what it is good at."
+      - id: c
+        text: "Events replace metrics."
+        explanation: "Not correct. They answer different questions."
+      - id: d
+        text: "Metrics hold the user ids."
+        explanation: "Not correct. Events hold the detail."
+    correct_option: b
+    explanation: "Correct. Use each for what it is good at."
+
+  - id: ats093-050-q14
+    type: single_choice
+    difficulty: beginner
+    learning_objective: "Name the tracing option"
+    source_readings:
+      - sections/section-050/module-02/course-02-tracing-a-request.md
+    prompt: "Which option enables tracing?"
+    options:
+      - id: a
+        text: "`health-enabled`"
+        explanation: "Not correct. That is for health."
+      - id: b
+        text: "`tracing-enabled`"
+        explanation: "Correct. Point `tracing-endpoint` at a collector."
+      - id: c
+        text: "`metrics-enabled`"
+        explanation: "Not correct. That is for metrics."
+      - id: d
+        text: "`log-console-output`"
+        explanation: "Not correct. That is for logs."
+    correct_option: b
+    explanation: "Correct. Point `tracing-endpoint` at a collector."
+
+  - id: ats093-050-q15
+    type: single_choice
+    difficulty: advanced
+    learning_objective: "Handle the sampling default"
+    source_readings:
+      - sections/section-050/module-02/course-02-tracing-a-request.md
+    prompt: "What is the default trace ratio, and what should production do?"
+    options:
+      - id: a
+        text: "There is no sampling."
+        explanation: "Not correct. A sampler is used."
+      - id: b
+        text: "1.0 sends every trace; production should use a smaller ratio."
+        explanation: "Correct. A ratio of 0.1 keeps one in ten."
+      - id: c
+        text: "0.0 sends nothing; production should raise it."
+        explanation: "Not correct. 0.0 turns sampling off."
+      - id: d
+        text: "0.5 is always right."
+        explanation: "Not correct. The default is 1.0."
+    correct_option: b
+    explanation: "Correct. A ratio of 0.1 keeps one in ten."
+
+  - id: ats093-050-q16
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Link logs and traces"
+    source_readings:
+      - sections/section-050/module-02/course-02-tracing-a-request.md
+    prompt: "What does `log-console-include-trace` add?"
+    options:
+      - id: a
+        text: "The collector endpoint."
+        explanation: "Not correct. The endpoint is separate."
+      - id: b
+        text: "The trace and span id to each log record."
+        explanation: "Correct. It links a slow trace to its log lines."
+      - id: c
+        text: "A copy of the trace to a file."
+        explanation: "Not correct. It writes no file."
+      - id: d
+        text: "Debug logging for the tracer."
+        explanation: "Not correct. It changes the record, not the level."
+    correct_option: b
+    explanation: "Correct. It links a slow trace to its log lines."
+
+  - id: ats093-050-q17
+    type: single_choice
+    difficulty: beginner
+    learning_objective: "Start at the outside"
+    source_readings:
+      - sections/section-050/module-02/course-03-a-method-for-troubleshooting.md
+    prompt: "What do you read first when a Keycloak resource is not Ready?"
+    options:
+      - id: a
+        text: "The realm export."
+        explanation: "Not correct. Export is unrelated."
+      - id: b
+        text: "The conditions in the status of the resource."
+        explanation: "Correct. Then the pod, its events and the log."
+      - id: c
+        text: "The database dump."
+        explanation: "Not correct. The dump is for restores."
+      - id: d
+        text: "The proxy log only."
+        explanation: "Not correct. It is further from the cause."
+    correct_option: b
+    explanation: "Correct. Then the pod, its events and the log."
+
+  - id: ats093-050-q18
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Read a crashed container"
+    source_readings:
+      - sections/section-050/module-02/course-03-a-method-for-troubleshooting.md
+    prompt: "How do you read the log of the run that died?"
+    options:
+      - id: a
+        text: "`kubectl top pod`"
+        explanation: "Not correct. That shows usage."
+      - id: b
+        text: "`kubectl logs keycloak-0 --previous`"
+        explanation: "Correct. It shows the container before the restart."
+      - id: c
+        text: "`kubectl get keycloak`"
+        explanation: "Not correct. That shows status."
+      - id: d
+        text: "`kubectl delete pod keycloak-0`"
+        explanation: "Not correct. That destroys evidence."
+    correct_option: b
+    explanation: "Correct. It shows the container before the restart."
+
+  - id: ats093-050-q19
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Find the layer of a failure"
+    source_readings:
+      - sections/section-050/module-02/course-04-common-failures-and-their-signs.md
+    prompt: "Where does `CreateContainerConfigError` show up?"
+    options:
+      - id: a
+        text: "In the realm events."
+        explanation: "Not correct. No realm was reached."
+      - id: b
+        text: "In the events of the pod."
+        explanation: "Correct. The container never started."
+      - id: c
+        text: "In the container log."
+        explanation: "Not correct. There is no log yet."
+      - id: d
+        text: "In the metrics."
+        explanation: "Not correct. Nothing ran."
+    correct_option: b
+    explanation: "Correct. The container never started."
+
+  - id: ats093-050-q20
+    type: single_choice
+    difficulty: advanced
+    learning_objective: "Spot a hidden second fault"
+    source_readings:
+      - sections/section-050/module-02/course-04-common-failures-and-their-signs.md
+    prompt: "You fixed a missing Secret key and the pod now fails with `database \"x\" does not exist`. What does that mean?"
+    options:
+      - id: a
+        text: "The database is full."
+        explanation: "Not correct. It says the name is wrong."
+      - id: b
+        text: "A second mistake was hidden behind the first."
+        explanation: "Correct. Fix it and check again."
+      - id: c
+        text: "The first fix was wrong."
+        explanation: "Not correct. The pod got further."
+      - id: d
+        text: "The operator is broken."
+        explanation: "Not correct. The log names the cause."
+    correct_option: b
+    explanation: "Correct. Fix it and check again."

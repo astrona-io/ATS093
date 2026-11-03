@@ -1,0 +1,52 @@
+# The edge proxy: nginx ends TLS on port 8443 with the certificate in the
+# Secret edge-tls and reads its configuration from the ConfigMap nginx-conf.
+# After a change to nginx-conf, restart it: kubectl -n keycloak rollout restart deployment/nginx
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx
+  namespace: keycloak
+  labels:
+    app: nginx
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+        - name: nginx
+          image: nginx:1.27-alpine
+          ports:
+            - name: https
+              containerPort: 8443
+          volumeMounts:
+            - name: conf
+              mountPath: /etc/nginx/conf.d
+            - name: tls
+              mountPath: /etc/nginx/tls
+              readOnly: true
+      volumes:
+        - name: conf
+          configMap:
+            name: nginx-conf
+        - name: tls
+          secret:
+            secretName: edge-tls
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx
+  namespace: keycloak
+spec:
+  selector:
+    app: nginx
+  ports:
+    - name: https
+      port: 8443
+      targetPort: https

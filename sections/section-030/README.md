@@ -14,7 +14,7 @@ This section puts Keycloak behind an nginx reverse proxy that ends TLS, and then
 
 ## The learning path
 
-The section has one module. It has a landing page, three short parts, two graded labs, each right after the part it tests, and a summary. The landing page starts the module's playground: Keycloak behind nginx, with TLS ended at nginx.
+The section has three modules. Each has a landing page that starts its playground, short parts, a graded lab right after the part it tests, and a summary. The first module puts Keycloak behind nginx with TLS ended at nginx.
 
 ### 1. Put Keycloak Behind A Reverse Proxy
 
@@ -22,6 +22,22 @@ The section has one module. It has a landing page, three short parts, two graded
 2. What To Expose Through The Proxy, followed by the lab **Expose Keycloak Through An Edge Proxy**
 3. Brute Force Detection And Rate Limiting, followed by the lab **Stop Password Guessing**
 4. Summary
+
+### 2. Certificates, Hostname And Mutual TLS
+
+1. The Hostname Options
+2. Certificates And Trust, followed by the lab **Replace The Edge Certificate**
+3. Mutual TLS And Client Certificates
+4. Diagnosing TLS And Hostname Problems
+5. Summary
+
+### 3. Harden The Realm And The Server
+
+1. Password And Account Policies
+2. Sessions, Tokens And Events, followed by the lab **Harden The Realm Settings**
+3. The Server And The Administrator
+4. A Hardening Review
+5. Summary
 
 ## Section capstone: Harden The Keycloak Edge
 

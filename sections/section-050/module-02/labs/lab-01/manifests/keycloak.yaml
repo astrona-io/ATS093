@@ -1,0 +1,37 @@
+# A working Keycloak for this course: one instance on PostgreSQL, HTTP inside
+# the cluster, no Ingress (kind has no ingress controller), and resources
+# small enough for a laptop.
+apiVersion: k8s.keycloak.org/v2beta1
+kind: Keycloak
+metadata:
+  name: keycloak
+  namespace: keycloak
+spec:
+  instances: 1
+  db:
+    vendor: postgres
+    host: postgres
+    database: keycloak
+    usernameSecret:
+      name: keycloak-db
+      key: username
+    passwordSecret:
+      name: keycloak-db
+      key: password
+  http:
+    httpEnabled: true
+  hostname:
+    hostname: http://keycloak-service:8080
+  ingress:
+    enabled: false
+  additionalOptions:
+    - name: health-enabled
+      value: "true"
+    - name: metrics-enabled
+      value: "true"
+  resources:
+    requests:
+      memory: 768Mi
+      cpu: 250m
+    limits:
+      memory: 1536Mi

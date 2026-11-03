@@ -20,7 +20,8 @@ training:
     its Keycloak and KeycloakRealmImport resources, PostgreSQL and Infinispan
     clustering, TLS termination at a reverse proxy, what to expose, brute force
     detection and rate limiting, database backup and restore, and upgrades
-    with the operator's update strategies. Each module pairs a layered reader
+    with the operator's update strategies, and observability with health
+    endpoints, metrics, structured logs, events and tracing. Each module pairs a layered reader
     with an ungraded hands-on playground and graded practice labs. Each
     section closes with an integration capstone.
     Written for the Keycloak Operator and Keycloak 26.8.1.
@@ -59,7 +60,8 @@ modules:
     description: >
       What the Keycloak Operator installs and manages, the Keycloak custom
       resource and its status conditions, the initial admin Secret, and
-      creating realms with KeycloakRealmImport.
+      creating realms with KeycloakRealmImport. Tuning the pods: resources,
+      scheduling, server options, custom images.
 
     content:
       - type: reading
@@ -103,6 +105,84 @@ modules:
         path: sections/section-010/module-01/course-04-summary.md
 
       - type: reading
+        title: "Tune The Keycloak Pods With The Operator"
+        path: sections/section-010/module-02/course.md
+      - type: reading
+        title: "Resources And Java Memory"
+        path: sections/section-010/module-02/course-01-resources-and-java-memory.md
+      - type: reading
+        title: "Scheduling And Priority"
+        path: sections/section-010/module-02/course-02-scheduling-and-priority.md
+      - type: reading
+        title: "Server Options And Secrets"
+        path: sections/section-010/module-02/course-03-server-options-and-secrets.md
+      - type: reading
+        title: Question
+        path: sections/section-010/module-02/labs/lab-01/question.md
+      - type: lab
+        title: "Set Resources, Scheduling And Log Format Lab"
+        path: sections/section-010/module-02/labs/lab-01
+        difficulty: intermediate
+        estimated_duration: 20m
+        topic: pod-tuning
+        task_kind: troubleshooting
+        tags: [keycloak-cr, resources, scheduling, topology-spread, additional-options, json-log]
+        learning_goals:
+          - Find why a Keycloak pod stays Pending from the pod events
+          - Set resource requests and limits and a topology spread constraint in the Keycloak resource
+          - Switch the console log to JSON with additionalOptions and prove it from the pod log
+        resources:
+          - name: "Advanced configuration"
+            url: https://www.keycloak.org/operator/advanced-configuration
+          - name: "Logging"
+            url: https://www.keycloak.org/server/logging
+      - type: reading
+        title: "Pod Template And Custom Images"
+        path: sections/section-010/module-02/course-04-pod-template-and-custom-images.md
+      - type: reading
+        title: Summary
+        path: sections/section-010/module-02/course-05-summary.md
+
+      - type: reading
+        title: "Manage Realms And Clients Declaratively"
+        path: sections/section-010/module-03/course.md
+      - type: reading
+        title: "How A Realm Import Works"
+        path: sections/section-010/module-03/course-01-how-a-realm-import-works.md
+      - type: reading
+        title: "Changing A Realm That Exists"
+        path: sections/section-010/module-03/course-02-changing-a-realm-that-exists.md
+      - type: reading
+        title: Question
+        path: sections/section-010/module-03/labs/lab-01/question.md
+      - type: lab
+        title: "Update A Realm That Was Already Imported Lab"
+        path: sections/section-010/module-03/labs/lab-01
+        difficulty: intermediate
+        estimated_duration: 20m
+        topic: realm-management
+        task_kind: troubleshooting
+        tags: [kcadm, admin-rest-api, realm-import, clients, token-lifespan]
+        learning_goals:
+          - Explain why a changed KeycloakRealmImport does not change an existing realm
+          - Create a client and change a realm setting with kcadm.sh
+          - Prove the result with the client, the realm setting and a token for alice
+        resources:
+          - name: "Automating a realm import"
+            url: https://www.keycloak.org/operator/realm-import
+          - name: "Admin CLI"
+            url: https://www.keycloak.org/docs/latest/server_admin/index.html#admin-cli
+      - type: reading
+        title: "Client Resources"
+        path: sections/section-010/module-03/course-03-client-resources.md
+      - type: reading
+        title: "Configuration Across Environments"
+        path: sections/section-010/module-03/course-04-configuration-across-environments.md
+      - type: reading
+        title: Summary
+        path: sections/section-010/module-03/course-05-summary.md
+
+      - type: reading
         title: Question
         path: sections/section-010/capstone/labs/lab-01/question.md
       - type: lab
@@ -132,7 +212,8 @@ modules:
     description: >
       Why the database holds everything that matters, the Infinispan caches,
       how instances find each other with jdbc-ping, and how to prove that two
-      instances form one cluster.
+      instances form one cluster; cache limits, sessions and transport security;
+      disruption budgets, spreading, scaling and multi-site.
 
     content:
       - type: reading
@@ -173,6 +254,84 @@ modules:
         path: sections/section-020/module-01/course-03-summary.md
 
       - type: reading
+        title: "Tune Caches And Sessions"
+        path: sections/section-020/module-02/course.md
+      - type: reading
+        title: "Cache Types And Limits"
+        path: sections/section-020/module-02/course-01-cache-types-and-limits.md
+      - type: reading
+        title: "Sessions In Memory And In The Database"
+        path: sections/section-020/module-02/course-02-sessions-in-memory-and-in-the-database.md
+      - type: reading
+        title: Question
+        path: sections/section-020/module-02/labs/lab-01/question.md
+      - type: lab
+        title: "Limit The Embedded Caches Lab"
+        path: sections/section-020/module-02/labs/lab-01
+        difficulty: intermediate
+        estimated_duration: 20m
+        topic: caching
+        task_kind: configuration
+        tags: [infinispan, cache, sessions, additionalOptions, cluster]
+        learning_goals:
+          - Bound the users and sessions caches with cache-embedded max-count options
+          - Keep health and metrics options when patching additionalOptions
+          - Prove both pods run with the limits and still form one cluster
+        resources:
+          - name: "Configuring distributed caches"
+            url: https://www.keycloak.org/server/caching
+          - name: "Keycloak Operator basic deployment"
+            url: https://www.keycloak.org/operator/basic-deployment
+      - type: reading
+        title: "Cluster Transport And Its Security"
+        path: sections/section-020/module-02/course-03-cluster-transport-and-its-security.md
+      - type: reading
+        title: "Sizing And Observing Caches"
+        path: sections/section-020/module-02/course-04-sizing-and-observing-caches.md
+      - type: reading
+        title: Summary
+        path: sections/section-020/module-02/course-05-summary.md
+
+      - type: reading
+        title: "Scale And Keep Keycloak Available"
+        path: sections/section-020/module-03/course.md
+      - type: reading
+        title: "Planned And Unplanned Disruption"
+        path: sections/section-020/module-03/course-01-planned-and-unplanned-disruption.md
+      - type: reading
+        title: Question
+        path: sections/section-020/module-03/labs/lab-01/question.md
+      - type: lab
+        title: "Fix The Disruption Budget Lab"
+        path: sections/section-020/module-03/labs/lab-01
+        difficulty: intermediate
+        estimated_duration: 15m
+        topic: availability
+        task_kind: troubleshooting
+        tags: [poddisruptionbudget, availability, drain, kubernetes]
+        learning_goals:
+          - Read a PodDisruptionBudget and explain why it allows no disruption
+          - Change the rule so one Keycloak pod can be evicted at a time
+          - Keep the Keycloak cluster and the sign-in working
+        resources:
+          - name: "Disruptions"
+            url: https://kubernetes.io/docs/concepts/workloads/pods/disruptions/
+          - name: "Keycloak high availability guide"
+            url: https://www.keycloak.org/high-availability/introduction
+      - type: reading
+        title: "Spreading The Pods"
+        path: sections/section-020/module-03/course-02-spreading-the-pods.md
+      - type: reading
+        title: "Scaling Keycloak"
+        path: sections/section-020/module-03/course-03-scaling-keycloak.md
+      - type: reading
+        title: "Graceful Shutdown And Multi-Site"
+        path: sections/section-020/module-03/course-04-graceful-shutdown-and-multi-site.md
+      - type: reading
+        title: Summary
+        path: sections/section-020/module-03/course-05-summary.md
+
+      - type: reading
         title: Question
         path: sections/section-020/capstone/labs/lab-01/question.md
       - type: lab
@@ -201,8 +360,8 @@ modules:
     title: "Edge Security"
     description: >
       TLS termination modes and proxy headers, the paths a reverse proxy
-      should and should not expose, brute force detection in a realm, and rate
-      limiting at the proxy.
+      should and should not expose, brute force detection in a realm, rate
+      limiting at the proxy, the hostname options, certificates and mutual TLS, realm and server hardening.
 
     content:
       - type: reading
@@ -266,6 +425,84 @@ modules:
         path: sections/section-030/module-01/course-04-summary.md
 
       - type: reading
+        title: "Certificates, Hostname And Mutual TLS"
+        path: sections/section-030/module-02/course.md
+      - type: reading
+        title: "The Hostname Options"
+        path: sections/section-030/module-02/course-01-the-hostname-options.md
+      - type: reading
+        title: "Certificates And Trust"
+        path: sections/section-030/module-02/course-02-certificates-and-trust.md
+      - type: reading
+        title: Question
+        path: sections/section-030/module-02/labs/lab-01/question.md
+      - type: lab
+        title: "Replace The Edge Certificate Lab"
+        path: sections/section-030/module-02/labs/lab-01
+        difficulty: intermediate
+        estimated_duration: 20m
+        topic: tls
+        task_kind: troubleshooting
+        tags: [tls, certificates, openssl, nginx, secret]
+        learning_goals:
+          - Read the name and dates of a served certificate with openssl
+          - Replace a TLS Secret and restart the proxy that reads it
+          - Prove the served certificate is the one in the Secret and Keycloak still works
+        resources:
+          - name: "Configuring the hostname"
+            url: https://www.keycloak.org/server/hostname
+          - name: "Using a reverse proxy"
+            url: https://www.keycloak.org/server/reverseproxy
+      - type: reading
+        title: "Mutual TLS And Client Certificates"
+        path: sections/section-030/module-02/course-03-mutual-tls-and-client-certificates.md
+      - type: reading
+        title: "Diagnosing TLS And Hostname Problems"
+        path: sections/section-030/module-02/course-04-diagnosing-tls-and-hostname-problems.md
+      - type: reading
+        title: Summary
+        path: sections/section-030/module-02/course-05-summary.md
+
+      - type: reading
+        title: "Harden The Realm And The Server"
+        path: sections/section-030/module-03/course.md
+      - type: reading
+        title: "Password And Account Policies"
+        path: sections/section-030/module-03/course-01-password-and-account-policies.md
+      - type: reading
+        title: "Sessions, Tokens And Events"
+        path: sections/section-030/module-03/course-02-sessions-tokens-and-events.md
+      - type: reading
+        title: Question
+        path: sections/section-030/module-03/labs/lab-01/question.md
+      - type: lab
+        title: "Harden The Realm Settings Lab"
+        path: sections/section-030/module-03/labs/lab-01
+        difficulty: intermediate
+        estimated_duration: 20m
+        topic: security
+        task_kind: troubleshooting
+        tags: [hardening, password-policy, events, refresh-tokens]
+        learning_goals:
+          - Set a password policy and prove a short password is refused
+          - Turn on login and administration events
+          - Make refresh tokens single use and check sign-in still works
+        resources:
+          - name: "Server administration guide"
+            url: https://www.keycloak.org/docs/latest/server_admin/
+          - name: "Securing applications"
+            url: https://www.keycloak.org/docs/latest/securing_apps/
+      - type: reading
+        title: "The Server And The Administrator"
+        path: sections/section-030/module-03/course-03-the-server-and-the-administrator.md
+      - type: reading
+        title: "A Hardening Review"
+        path: sections/section-030/module-03/course-04-a-hardening-review.md
+      - type: reading
+        title: Summary
+        path: sections/section-030/module-03/course-05-summary.md
+
+      - type: reading
         title: Question
         path: sections/section-030/capstone/labs/lab-01/question.md
       - type: lab
@@ -295,7 +532,8 @@ modules:
     description: >
       What a Keycloak backup must contain, dumping and restoring the
       PostgreSQL database next to the damaged one, and upgrading Keycloak with
-      the operator's update strategies.
+      the operator's update strategies, exporting, importing and migrating realms,
+      and planning an upgrade.
 
     content:
       - type: reading
@@ -339,6 +577,45 @@ modules:
         path: sections/section-040/module-01/course-04-summary.md
 
       - type: reading
+        title: "Export, Import And Migrate Realms"
+        path: sections/section-040/module-02/course.md
+      - type: reading
+        title: "The Ways To Export And Import"
+        path: sections/section-040/module-02/course-01-the-ways-to-export-and-import.md
+      - type: reading
+        title: "Working With The Export File"
+        path: sections/section-040/module-02/course-02-working-with-the-export-file.md
+      - type: reading
+        title: Question
+        path: sections/section-040/module-02/labs/lab-01/question.md
+      - type: lab
+        title: "Export A Realm For Reuse Lab"
+        path: sections/section-040/module-02/labs/lab-01
+        difficulty: intermediate
+        estimated_duration: 20m
+        topic: migration
+        task_kind: troubleshooting
+        tags: [export, import, partial-export, placeholders]
+        learning_goals:
+          - Take a partial export of a realm through the Administration REST API
+          - Replace a masked client secret with a placeholder
+          - Keep the original realm untouched
+        resources:
+          - name: "Importing and exporting realms"
+            url: https://www.keycloak.org/server/importExport
+          - name: "Realm import with the operator"
+            url: https://www.keycloak.org/operator/realm-import
+      - type: reading
+        title: "Migrating Between Environments"
+        path: sections/section-040/module-02/course-03-migrating-between-environments.md
+      - type: reading
+        title: "Planning An Upgrade"
+        path: sections/section-040/module-02/course-04-planning-an-upgrade.md
+      - type: reading
+        title: Summary
+        path: sections/section-040/module-02/course-05-summary.md
+
+      - type: reading
         title: Question
         path: sections/section-040/capstone/labs/lab-01/question.md
       - type: lab
@@ -361,6 +638,122 @@ modules:
       - type: quiz
         title: "Knowledge Check: Backup, Restore And Upgrades"
         path: sections/section-040/quiz.yaml
+        pass_score: 70
+
+  - id: module-050
+    title: "Observability And Troubleshooting"
+    description: >
+      Health endpoints and probes, metrics on the management port, log levels
+      and JSON logs, what to alert on, login and administration events,
+      OpenTelemetry tracing, and a method for troubleshooting a Keycloak that
+      does not start.
+
+    content:
+      - type: reading
+        title: Section Overview
+        path: sections/section-050/README.md
+
+      - type: reading
+        title: "Health, Metrics And Logs"
+        path: sections/section-050/module-01/course.md
+      - type: reading
+        title: "Health Endpoints And Probes"
+        path: sections/section-050/module-01/course-01-health-endpoints-and-probes.md
+      - type: reading
+        title: "Metrics On The Management Port"
+        path: sections/section-050/module-01/course-02-metrics-on-the-management-port.md
+      - type: reading
+        title: "Logs That Machines Can Read"
+        path: sections/section-050/module-01/course-03-logs-that-machines-can-read.md
+      - type: reading
+        title: Question
+        path: sections/section-050/module-01/labs/lab-01/question.md
+      - type: lab
+        title: "Make Keycloak Observable Lab"
+        path: sections/section-050/module-01/labs/lab-01
+        difficulty: intermediate
+        estimated_duration: 20m
+        topic: observability
+        task_kind: troubleshooting
+        tags: [logs, json, metrics, servicemonitor, health]
+        learning_goals:
+          - Write the console log as JSON
+          - Give the events category its own log level
+          - Set the ServiceMonitor interval and check health and metrics
+        resources:
+          - name: "Logging"
+            url: https://www.keycloak.org/server/logging
+          - name: "Metrics"
+            url: https://www.keycloak.org/observability/configuration-metrics
+          - name: "Health checks"
+            url: https://www.keycloak.org/observability/health
+      - type: reading
+        title: "What To Watch And Alert On"
+        path: sections/section-050/module-01/course-04-what-to-watch-and-alert-on.md
+      - type: reading
+        title: Summary
+        path: sections/section-050/module-01/course-05-summary.md
+      - type: reading
+        title: "Events, Tracing And Troubleshooting"
+        path: sections/section-050/module-02/course.md
+      - type: reading
+        title: "Events As Signals"
+        path: sections/section-050/module-02/course-01-events-as-signals.md
+      - type: reading
+        title: "Tracing A Request"
+        path: sections/section-050/module-02/course-02-tracing-a-request.md
+      - type: reading
+        title: "A Method For Troubleshooting"
+        path: sections/section-050/module-02/course-03-a-method-for-troubleshooting.md
+      - type: reading
+        title: Question
+        path: sections/section-050/module-02/labs/lab-01/question.md
+      - type: lab
+        title: "Find Why Keycloak Does Not Start Lab"
+        path: sections/section-050/module-02/labs/lab-01
+        difficulty: intermediate
+        estimated_duration: 20m
+        topic: troubleshooting
+        task_kind: troubleshooting
+        tags: [troubleshooting, conditions, pod-events, logs]
+        learning_goals:
+          - Read the conditions of a Keycloak resource, the events of a pod and a container log
+          - Fix a database name and a Secret key that hide behind each other
+          - Bring the resource to Ready
+        resources:
+          - name: "Operator basic deployment"
+            url: https://www.keycloak.org/operator/basic-deployment
+          - name: "Tracing"
+            url: https://www.keycloak.org/observability/tracing
+      - type: reading
+        title: "Common Failures And Their Signs"
+        path: sections/section-050/module-02/course-04-common-failures-and-their-signs.md
+      - type: reading
+        title: Summary
+        path: sections/section-050/module-02/course-05-summary.md
+      - type: reading
+        title: Question
+        path: sections/section-050/capstone/labs/lab-01/question.md
+      - type: lab
+        title: "Make Keycloak Observable End To End Capstone"
+        path: sections/section-050/capstone/labs/lab-01
+        difficulty: advanced
+        estimated_duration: 40m
+        topic: observability
+        task_kind: troubleshooting
+        tags: [metrics, json-logs, events, expiration, loginerror]
+        learning_goals:
+          - Enable metrics and structured logs with the right levels
+          - Record login events with an expiration
+          - Prove the setup by causing and finding a failed login
+        resources:
+          - name: "Metrics"
+            url: https://www.keycloak.org/observability/configuration-metrics
+          - name: "Logging"
+            url: https://www.keycloak.org/server/logging
+      - type: quiz
+        title: "Knowledge Check: Observability And Troubleshooting"
+        path: sections/section-050/quiz.yaml
         pass_score: 70
       - type: quiz
         title: "Final Domain Quiz"

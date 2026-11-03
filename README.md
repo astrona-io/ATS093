@@ -26,15 +26,17 @@ contains:
 
 | Section | Title | Modules | Labs | Topic |
 | --- | --- | --- | --- | --- |
-| [010](sections/section-010) | Running Keycloak With The Keycloak Operator | 1 | 1 + capstone | The Keycloak Operator |
-| [020](sections/section-020) | Databases And Clustering | 1 | 1 + capstone | Database and clustering |
-| [030](sections/section-030) | Edge Security | 1 | 2 + capstone | TLS termination, exposure, brute force, rate limiting |
-| [040](sections/section-040) | Backup, Restore And Upgrades | 1 | 1 + capstone | Backup, restore and upgrades |
+| [010](sections/section-010) | Running Keycloak With The Keycloak Operator | 3 | 3 + capstone | The Keycloak Operator |
+| [020](sections/section-020) | Databases And Clustering | 3 | 3 + capstone | Database and clustering |
+| [030](sections/section-030) | Edge Security | 3 | 4 + capstone | TLS termination, exposure, brute force, rate limiting |
+| [040](sections/section-040) | Backup, Restore And Upgrades | 2 | 2 + capstone | Backup, restore and upgrades |
+| [050](sections/section-050) | Observability And Troubleshooting | 2 | 2 + capstone | Health, metrics, logs, events, tracing, troubleshooting |
 
 The order follows a deployment's life. Section 010 brings Keycloak up through
 the operator. Section 020 makes it highly available. Section 030 opens it to
 the outside world safely. Section 040 keeps its data safe through failures and
-upgrades.
+upgrades. Section 050 makes it observable and shows how to find out why it
+fails.
 
 ---
 
@@ -43,9 +45,18 @@ upgrades.
 | Module | Reader | Parts | Labs |
 | --- | --- | --- | --- |
 | 010-01 | [Deploy Keycloak With The Operator](sections/section-010/module-01/course.md) | 3 | [lab-01](sections/section-010/module-01/labs/lab-01) |
+| 010-02 | [Tune The Keycloak Pods With The Operator](sections/section-010/module-02/course.md) | 4 | [lab-01](sections/section-010/module-02/labs/lab-01) |
+| 010-03 | [Manage Realms And Clients Declaratively](sections/section-010/module-03/course.md) | 4 | [lab-01](sections/section-010/module-03/labs/lab-01) |
 | 020-01 | [Run Keycloak As A Cluster](sections/section-020/module-01/course.md) | 2 | [lab-01](sections/section-020/module-01/labs/lab-01) |
+| 020-02 | [Tune Caches And Sessions](sections/section-020/module-02/course.md) | 4 | [lab-01](sections/section-020/module-02/labs/lab-01) |
+| 020-03 | [Scale And Keep Keycloak Available](sections/section-020/module-03/course.md) | 4 | [lab-01](sections/section-020/module-03/labs/lab-01) |
 | 030-01 | [Put Keycloak Behind A Reverse Proxy](sections/section-030/module-01/course.md) | 3 | [lab-01](sections/section-030/module-01/labs/lab-01), [lab-02](sections/section-030/module-01/labs/lab-02) |
+| 030-02 | [Certificates, Hostname And Mutual TLS](sections/section-030/module-02/course.md) | 4 | [lab-01](sections/section-030/module-02/labs/lab-01) |
+| 030-03 | [Harden The Realm And The Server](sections/section-030/module-03/course.md) | 4 | [lab-01](sections/section-030/module-03/labs/lab-01) |
 | 040-01 | [Back Up, Restore And Upgrade Keycloak](sections/section-040/module-01/course.md) | 3 | [lab-01](sections/section-040/module-01/labs/lab-01) |
+| 040-02 | [Export, Import And Migrate Realms](sections/section-040/module-02/course.md) | 4 | [lab-01](sections/section-040/module-02/labs/lab-01) |
+| 050-01 | [Health, Metrics And Logs](sections/section-050/module-01/course.md) | 4 | [lab-01](sections/section-050/module-01/labs/lab-01) |
+| 050-02 | [Events, Tracing And Troubleshooting](sections/section-050/module-02/course.md) | 4 | [lab-01](sections/section-050/module-02/labs/lab-01) |
 
 ---
 
@@ -57,6 +68,7 @@ upgrades.
 | [020](sections/section-020/capstone/labs/lab-01) | Keep Sessions Alive Through A Pod Restart | one instance, `cache=local`, a memory request no node can give |
 | [030](sections/section-030/capstone/labs/lab-01) | Harden The Keycloak Edge | internal hostname, no proxy headers, `/admin/` and `/metrics` public, no lockout, no rate limit |
 | [040](sections/section-040/capstone/labs/lab-01) | Recover After A Failed Upgrade | an image tag that does not exist under `RecreateOnImageChange`, a realm lost after the last dump |
+| [050](sections/section-050/capstone/labs/lab-01) | Make Keycloak Observable End To End | `debug` logs as plain text, no metrics, a realm that records no events |
 
 ---
 

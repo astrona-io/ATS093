@@ -244,3 +244,462 @@ questions:
     correct_option: a
     explanation: "Correct. Brute force detection counts failures for one user at a time."
 
+  - id: ats093-030-q11
+    type: single_choice
+    difficulty: beginner
+    learning_objective: "Explain the effect of a fixed hostname"
+    source_readings:
+      - sections/section-030/module-02/course-01-the-hostname-options.md
+    prompt: "`hostname` is set to a full URL. A request arrives with `X-Forwarded-Host: evil.example.com`. Which host does the issuer use?"
+    options:
+      - id: a
+        text: "The IP address of the proxy."
+        explanation: "Not correct. The proxy address is not used."
+      - id: b
+        text: "The configured hostname."
+        explanation: "Correct. A fixed hostname does not trust the header."
+      - id: c
+        text: "evil.example.com"
+        explanation: "Not correct. That would be the case only with a dynamic hostname."
+      - id: d
+        text: "The Service name."
+        explanation: "Not correct. The Service name is for the backchannel."
+    correct_option: b
+    explanation: "Correct. A fixed hostname does not trust the header."
+
+  - id: ats093-030-q12
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Know the risk of hostname-strict false"
+    source_readings:
+      - sections/section-030/module-02/course-01-the-hostname-options.md
+    prompt: "What is the risk of `hostname-strict=false`?"
+    options:
+      - id: a
+        text: "Cache entries are lost."
+        explanation: "Not correct. Caches are unrelated."
+      - id: b
+        text: "Host header injection into generated URLs."
+        explanation: "Correct. Use it only if the proxy overwrites the headers."
+      - id: c
+        text: "Tokens are no longer signed."
+        explanation: "Not correct. Signing is unrelated."
+      - id: d
+        text: "The database connection is unencrypted."
+        explanation: "Not correct. The database is unrelated."
+    correct_option: b
+    explanation: "Correct. Use it only if the proxy overwrites the headers."
+
+  - id: ats093-030-q13
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Describe the admin hostname"
+    source_readings:
+      - sections/section-030/module-02/course-01-the-hostname-options.md
+    prompt: "Does `hostname-admin` block the Administration REST API on the public hostname?"
+    options:
+      - id: a
+        text: "No, because the API is disabled by default."
+        explanation: "Not correct. The API is enabled."
+      - id: b
+        text: "No. Block the paths on the proxy."
+        explanation: "Correct. The option only moves where the console loads from."
+      - id: c
+        text: "Yes, the API moves entirely."
+        explanation: "Not correct. The public address still serves it."
+      - id: d
+        text: "Yes, but only for the master realm."
+        explanation: "Not correct. It is not realm specific."
+    correct_option: b
+    explanation: "Correct. The option only moves where the console loads from."
+
+  - id: ats093-030-q14
+    type: single_choice
+    difficulty: beginner
+    learning_objective: "Choose what clients match"
+    source_readings:
+      - sections/section-030/module-02/course-02-certificates-and-trust.md
+    prompt: "Which certificate field do modern clients match against the host name?"
+    options:
+      - id: a
+        text: "The serial number."
+        explanation: "Not correct. The serial is an identifier."
+      - id: b
+        text: "The subject alternative name."
+        explanation: "Correct. A missing alternative name fails the check."
+      - id: c
+        text: "The common name."
+        explanation: "Not correct. The common name alone is not enough."
+      - id: d
+        text: "The issuer."
+        explanation: "Not correct. The issuer names the signer."
+    correct_option: b
+    explanation: "Correct. A missing alternative name fails the check."
+
+  - id: ats093-030-q15
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Replace a TLS Secret correctly"
+    source_readings:
+      - sections/section-030/module-02/course-02-certificates-and-trust.md
+    prompt: "You replaced the Secret `edge-tls` but nginx still serves the old certificate. What is missing?"
+    options:
+      - id: a
+        text: "A new database password."
+        explanation: "Not correct. The database is unrelated."
+      - id: b
+        text: "A restart of nginx."
+        explanation: "Correct. nginx loads the certificate at start."
+      - id: c
+        text: "A new realm import."
+        explanation: "Not correct. The realm is unrelated."
+      - id: d
+        text: "A change of `hostname`."
+        explanation: "Not correct. The name has not changed."
+    correct_option: b
+    explanation: "Correct. nginx loads the certificate at start."
+
+  - id: ats093-030-q16
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Apply a Secret that exists"
+    source_readings:
+      - sections/section-030/module-02/course-02-certificates-and-trust.md
+    prompt: "`kubectl create secret tls edge-tls` fails because the Secret exists. What replaces it?"
+    options:
+      - id: a
+        text: "`kubectl patch keycloak`"
+        explanation: "Not correct. The Keycloak resource is not the Secret."
+      - id: b
+        text: "Render with `--dry-run=client -o yaml` and apply."
+        explanation: "Correct. `kubectl apply` updates the Secret."
+      - id: c
+        text: "`kubectl delete namespace`"
+        explanation: "Not correct. That deletes everything."
+      - id: d
+        text: "`kubectl rollout undo`"
+        explanation: "Not correct. That is for Deployments."
+    correct_option: b
+    explanation: "Correct. `kubectl apply` updates the Secret."
+
+  - id: ats093-030-q17
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Add a certificate authority to Keycloak"
+    source_readings:
+      - sections/section-030/module-02/course-02-certificates-and-trust.md
+    prompt: "Where do you add a certificate authority that Keycloak must trust in the operator?"
+    options:
+      - id: a
+        text: "`spec.proxy`"
+        explanation: "Not correct. That is for proxy headers."
+      - id: b
+        text: "`spec.truststores`"
+        explanation: "Correct. Point it at a Secret or ConfigMap with the PEM files."
+      - id: c
+        text: "`spec.http.tlsSecret`"
+        explanation: "Not correct. That is Keycloak's own certificate."
+      - id: d
+        text: "`spec.hostname`"
+        explanation: "Not correct. That is the public address."
+    correct_option: b
+    explanation: "Correct. Point it at a Secret or ConfigMap with the PEM files."
+
+  - id: ats093-030-q18
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Know the client auth values"
+    source_readings:
+      - sections/section-030/module-02/course-03-mutual-tls-and-client-certificates.md
+    prompt: "Which `https-client-auth` value accepts clients without a certificate but asks for one?"
+    options:
+      - id: a
+        text: "`optional-no-ca`"
+        explanation: "Not correct. That is not a value."
+      - id: b
+        text: "`request`"
+        explanation: "Correct. The flow then decides what to do with it."
+      - id: c
+        text: "`none`"
+        explanation: "Not correct. `none` does not ask."
+      - id: d
+        text: "`required`"
+        explanation: "Not correct. `required` refuses clients without one."
+    correct_option: b
+    explanation: "Correct. The flow then decides what to do with it."
+
+  - id: ats093-030-q19
+    type: single_choice
+    difficulty: advanced
+    learning_objective: "Secure a certificate header"
+    source_readings:
+      - sections/section-030/module-02/course-03-mutual-tls-and-client-certificates.md
+    prompt: "What must a proxy do when it passes the client certificate in a header?"
+    options:
+      - id: a
+        text: "Send it over plain HTTP."
+        explanation: "Not correct. The network must also be restricted."
+      - id: b
+        text: "Overwrite the header on every request."
+        explanation: "Correct. Otherwise a client can forge it."
+      - id: c
+        text: "Pass the header the client sent."
+        explanation: "Not correct. A client could forge the certificate."
+      - id: d
+        text: "Encode it in base64 only."
+        explanation: "Not correct. Encoding is not protection."
+    correct_option: b
+    explanation: "Correct. Otherwise a client can forge it."
+
+  - id: ats093-030-q20
+    type: single_choice
+    difficulty: beginner
+    learning_objective: "Order the checks"
+    source_readings:
+      - sections/section-030/module-02/course-04-diagnosing-tls-and-hostname-problems.md
+    prompt: "A user reports a certificate warning. Which check comes first after confirming the port is reachable?"
+    options:
+      - id: a
+        text: "The cache sizes."
+        explanation: "Not correct. Caches are not involved."
+      - id: b
+        text: "The TLS handshake and the certificate with `openssl s_client`."
+        explanation: "Correct. Check the names and dates it presents."
+      - id: c
+        text: "The realm import status."
+        explanation: "Not correct. The import is not involved in TLS."
+      - id: d
+        text: "The database pool."
+        explanation: "Not correct. The pool is not involved."
+    correct_option: b
+    explanation: "Correct. Check the names and dates it presents."
+
+  - id: ats093-030-q21
+    type: single_choice
+    difficulty: beginner
+    learning_objective: "Know when a password policy applies"
+    source_readings:
+      - sections/section-030/module-03/course-01-password-and-account-policies.md
+    prompt: "You add `length(12)` to the password policy. What happens to existing passwords?"
+    options:
+      - id: a
+        text: "They are all reset."
+        explanation: "Not correct. Nothing is reset."
+      - id: b
+        text: "They are rehashed to 12 characters."
+        explanation: "Not correct. Hashes cannot be extended."
+      - id: c
+        text: "Users are locked out."
+        explanation: "Not correct. Sign-in is unchanged."
+      - id: d
+        text: "They stay valid until users change them."
+        explanation: "Correct. The policy applies when a password is set."
+    correct_option: d
+    explanation: "Correct. The policy applies when a password is set."
+
+  - id: ats093-030-q22
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Choose the strongest rule"
+    source_readings:
+      - sections/section-030/module-03/course-01-password-and-account-policies.md
+    prompt: "Which rule gives the most protection per rule in current guidance?"
+    options:
+      - id: a
+        text: "Forced rotation every 30 days."
+        explanation: "Not correct. Rotation leads to predictable changes."
+      - id: b
+        text: "Requiring one symbol."
+        explanation: "Not correct. Symbols add little."
+      - id: c
+        text: "Banning vowels."
+        explanation: "Not correct. This is not a rule."
+      - id: d
+        text: "A minimum length."
+        explanation: "Correct. Length beats character classes."
+    correct_option: d
+    explanation: "Correct. Length beats character classes."
+
+  - id: ats093-030-q23
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Explain slow hashing"
+    source_readings:
+      - sections/section-030/module-03/course-01-password-and-account-policies.md
+    prompt: "Why is password hashing made slow on purpose?"
+    options:
+      - id: a
+        text: "To delay users at sign-in."
+        explanation: "Not correct. Delay is a side effect."
+      - id: b
+        text: "To save database space."
+        explanation: "Not correct. Size is unrelated."
+      - id: c
+        text: "To encrypt the tokens."
+        explanation: "Not correct. Tokens are signed, not hashed."
+      - id: d
+        text: "To make guessing from a stolen database expensive."
+        explanation: "Correct. It costs CPU on every sign-in too."
+    correct_option: d
+    explanation: "Correct. It costs CPU on every sign-in too."
+
+  - id: ats093-030-q24
+    type: single_choice
+    difficulty: beginner
+    learning_objective: "Know the event defaults"
+    source_readings:
+      - sections/section-030/module-03/course-02-sessions-tokens-and-events.md
+    prompt: "Are login events and administration events on by default?"
+    options:
+      - id: a
+        text: "Yes, both are on."
+        explanation: "Not correct. They are off."
+      - id: b
+        text: "Only login events are on."
+        explanation: "Not correct. Both are off."
+      - id: c
+        text: "Only administration events are on."
+        explanation: "Not correct. Both are off."
+      - id: d
+        text: "No, both are off."
+        explanation: "Correct. You must turn them on."
+    correct_option: d
+    explanation: "Correct. You must turn them on."
+
+  - id: ats093-030-q25
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Tell the event streams apart"
+    source_readings:
+      - sections/section-030/module-03/course-02-sessions-tokens-and-events.md
+    prompt: "Which stream answers who changed a client redirect URI?"
+    options:
+      - id: a
+        text: "Login events."
+        explanation: "Not correct. Login events record sign-ins."
+      - id: b
+        text: "The access log of the proxy only."
+        explanation: "Not correct. It does not know who."
+      - id: c
+        text: "Brute force detection."
+        explanation: "Not correct. It limits guessing."
+      - id: d
+        text: "Administration events."
+        explanation: "Correct. They record configuration changes."
+    correct_option: d
+    explanation: "Correct. They record configuration changes."
+
+  - id: ats093-030-q26
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Explain refresh token revocation"
+    source_readings:
+      - sections/section-030/module-03/course-02-sessions-tokens-and-events.md
+    prompt: "What does `revokeRefreshToken=true` change?"
+    options:
+      - id: a
+        text: "Access tokens last longer."
+        explanation: "Not correct. Lifespans are separate."
+      - id: b
+        text: "Sessions never expire."
+        explanation: "Not correct. Expiry is separate."
+      - id: c
+        text: "Offline tokens are deleted."
+        explanation: "Not correct. Offline tokens are separate."
+      - id: d
+        text: "Each refresh token can be used once."
+        explanation: "Correct. A replay ends the session."
+    correct_option: d
+    explanation: "Correct. A replay ends the session."
+
+  - id: ats093-030-q27
+    type: single_choice
+    difficulty: advanced
+    learning_objective: "Weigh the access token lifespan"
+    source_readings:
+      - sections/section-030/module-03/course-02-sessions-tokens-and-events.md
+    prompt: "Why is a short access token the strongest control against a stolen token?"
+    options:
+      - id: a
+        text: "Keycloak checks it at every request."
+        explanation: "Not correct. It does not call Keycloak."
+      - id: b
+        text: "It cannot be copied."
+        explanation: "Not correct. A bearer token can be copied."
+      - id: c
+        text: "It is encrypted."
+        explanation: "Not correct. It is signed."
+      - id: d
+        text: "A resource server trusts the signature until it expires."
+        explanation: "Correct. Without introspection it cannot be revoked."
+    correct_option: d
+    explanation: "Correct. Without introspection it cannot be revoked."
+
+  - id: ats093-030-q28
+    type: single_choice
+    difficulty: beginner
+    learning_objective: "Treat the bootstrap account"
+    source_readings:
+      - sections/section-030/module-03/course-03-the-server-and-the-administrator.md
+    prompt: "What should happen to the account in `keycloak-initial-admin` after setup?"
+    options:
+      - id: a
+        text: "Share it with the team."
+        explanation: "Not correct. Accounts must be named."
+      - id: b
+        text: "Keep it as the daily account."
+        explanation: "Not correct. It has no second factor."
+      - id: c
+        text: "Publish it in the realm."
+        explanation: "Not correct. Never publish it."
+      - id: d
+        text: "Replace it with named administrators and remove it."
+        explanation: "Correct. It is a temporary account."
+    correct_option: d
+    explanation: "Correct. It is a temporary account."
+
+  - id: ats093-030-q29
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Protect the management port"
+    source_readings:
+      - sections/section-030/module-03/course-03-the-server-and-the-administrator.md
+    prompt: "Where should the management port 9000 be reachable?"
+    options:
+      - id: a
+        text: "From the internet through the proxy."
+        explanation: "Not correct. It exposes health and metrics."
+      - id: b
+        text: "From every namespace."
+        explanation: "Not correct. Restrict it."
+      - id: c
+        text: "Only from the database."
+        explanation: "Not correct. The database does not need it."
+      - id: d
+        text: "Only by the monitoring system, through a network policy."
+        explanation: "Correct. Keep it off the public path."
+    correct_option: d
+    explanation: "Correct. Keep it off the public path."
+
+  - id: ats093-030-q30
+    type: single_choice
+    difficulty: advanced
+    learning_objective: "Verify a hardening setting"
+    source_readings:
+      - sections/section-030/module-03/course-04-a-hardening-review.md
+    prompt: "What shows that a hardening setting works?"
+    options:
+      - id: a
+        text: "The setting appears in the console."
+        explanation: "Not correct. A value is not a result."
+      - id: b
+        text: "The server restarts cleanly."
+        explanation: "Not correct. A restart proves nothing."
+      - id: c
+        text: "The documentation says so."
+        explanation: "Not correct. Verify on the live system."
+      - id: d
+        text: "A case that it should block is seen to be refused."
+        explanation: "Correct. Test the refusal."
+    correct_option: d
+    explanation: "Correct. Test the refusal."

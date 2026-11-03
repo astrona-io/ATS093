@@ -1,0 +1,52 @@
+# Update A Realm That Was Already Imported Lab
+# Astrona graded lab. Schema: internal/config.LabConfig.
+
+metadata:
+  name: "ats-093-lab-010-03-01"
+  docs:
+    guide: "solution.md"
+    solution: "solution.md"
+    question: "question.md"
+    examQuestion: "question.md"
+    prerequisites: "prerequisites.md"
+bootstrap:
+  init:
+    - name: "install-operator"
+      description: "Installs the Keycloak Operator 26.8.1, PostgreSQL and the tester pod in the namespace keycloak"
+      type: "file"
+      source: "bootstrap/01-install-operator.sh"
+    - name: "ats-093-lab-010-03-01-setup"
+      description: "Starts Keycloak and imports the realm inventory"
+      type: "file"
+      source: "bootstrap/02-seed-state.sh"
+testing:
+  init:
+    - name: "wait-for-keycloak"
+      description: "Waits for the operator and PostgreSQL before the reference solution runs"
+      type: "file"
+      source: "testing/wait-for-keycloak.sh"
+    - name: "reference-solution"
+      description: "The remediation a correct learner performs; used by `astrona test`"
+      type: "file"
+      source: "solution/apply.sh"
+validation:
+  scripts:
+    - name: "validate-web-client"
+      description: "Confirms the client inventory-web exists with the redirect URI https://inventory.example.com/*"
+      type: "file"
+      source: "validation/validate-web-client.sh"
+    - name: "validate-token-lifespan"
+      description: "Confirms the realm inventory has accessTokenLifespan 900"
+      type: "file"
+      source: "validation/validate-token-lifespan.sh"
+    - name: "validate-alice-and-import"
+      description: "Confirms alice still signs in and the realm import was not deleted"
+      type: "file"
+      source: "validation/validate-alice-and-import.sh"
+teardown:
+  keepCluster: false
+runtime:
+  kind:
+    preloadImages:
+      - nicolaka/netshoot:v0.13
+      - postgres:17-alpine
