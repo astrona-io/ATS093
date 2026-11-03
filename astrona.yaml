@@ -122,6 +122,10 @@ modules:
             url: https://www.keycloak.org/operator/basic-deployment
           - name: "Automating a realm import"
             url: https://www.keycloak.org/operator/realm-import
+      - type: quiz
+        title: "Knowledge Check: Running Keycloak With The Keycloak Operator"
+        path: sections/section-010/quiz.yaml
+        pass_score: 70
 
   - id: module-020
     title: "Databases And Clustering"
@@ -188,6 +192,10 @@ modules:
             url: https://www.keycloak.org/server/caching
           - name: "High availability overview"
             url: https://www.keycloak.org/high-availability/introduction
+      - type: quiz
+        title: "Knowledge Check: Databases And Clustering"
+        path: sections/section-020/quiz.yaml
+        pass_score: 70
 
   - id: module-030
     title: "Edge Security"
@@ -277,6 +285,10 @@ modules:
             url: https://www.keycloak.org/server/reverseproxy
           - name: "Configuring Keycloak for production"
             url: https://www.keycloak.org/server/configuration-production
+      - type: quiz
+        title: "Knowledge Check: Edge Security"
+        path: sections/section-030/quiz.yaml
+        pass_score: 70
 
   - id: module-040
     title: "Backup, Restore And Upgrades"
@@ -346,3 +358,11 @@ modules:
             url: https://www.keycloak.org/operator/rolling-updates
           - name: "Configuring the database"
             url: https://www.keycloak.org/server/db
+      - type: quiz
+        title: "Knowledge Check: Backup, Restore And Upgrades"
+        path: sections/section-040/quiz.yaml
+        pass_score: 70
+      - type: quiz
+        title: "Final Domain Quiz"
+        path: sections/final-domain-quiz.yaml
+        pass_score: 70

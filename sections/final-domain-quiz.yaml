@@ -1,0 +1,292 @@
+# Final domain knowledge check across all four sections.
+schema_version: 1
+kind: question_bank
+id: ats093-final
+course_id: ATS093
+exam_code: KEYCLOAK
+status: draft
+provenance: Original practice material written for this course; not official exam questions.
+scope:
+  type: domain
+  id: production-operations-security-kubernetes
+  title: "Production Operations, Security & Kubernetes"
+placement:
+  position: after
+  reading: sections/section-040/capstone/labs/lab-01/question.md
+questions:
+  - id: ats093-final-q01
+    type: single_choice
+    difficulty: beginner
+    learning_objective: "State which namespace the operator watches"
+    source_readings:
+      - sections/section-010/module-01/course-01-what-the-operator-manages.md
+    prompt: "The default operator install runs in the namespace `keycloak`. What happens to a `Keycloak` resource applied in another namespace?"
+    options:
+      - id: a
+        text: "The operator creates a copy of it in the namespace `keycloak`."
+        explanation: "Not correct. The operator never copies resources between namespaces."
+      - id: b
+        text: "The API server accepts it and the operator ignores it, with no error."
+        explanation: "Correct. The default install watches only its own namespace."
+      - id: c
+        text: "The API server refuses the resource with a validation error."
+        explanation: "Not correct. The resource is valid, so the API server accepts it."
+      - id: d
+        text: "The operator creates the StatefulSet in the other namespace."
+        explanation: "Not correct. It does not watch that namespace, so it creates nothing."
+    correct_option: b
+    explanation: "Correct. The default install watches only its own namespace."
+
+  - id: ats093-final-q02
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Read the status conditions of a Keycloak resource"
+    source_readings:
+      - sections/section-010/module-01/course-02-the-keycloak-custom-resource.md
+    prompt: "A `Keycloak` resource shows `Ready=False`. What is the right next step?"
+    options:
+      - id: a
+        text: "Read the pod events and then the Keycloak log to find what is wrong."
+        explanation: "Correct. The condition says something is wrong; the events and log say what."
+      - id: b
+        text: "Delete the `Keycloak` resource and apply it again."
+        explanation: "Not correct. That removes the evidence and does not find the cause."
+      - id: c
+        text: "Edit the StatefulSet to raise the replica count."
+        explanation: "Not correct. The operator reverts StatefulSet edits, and replicas are not the cause."
+      - id: d
+        text: "Wait, because `Ready=False` always fixes itself."
+        explanation: "Not correct. A pod that never became ready does not replace itself."
+    correct_option: a
+    explanation: "Correct. The condition says something is wrong; the events and log say what."
+
+  - id: ats093-final-q03
+    type: single_choice
+    difficulty: advanced
+    learning_objective: "Know that an import never updates a realm"
+    source_readings:
+      - sections/section-010/module-01/course-03-importing-realms.md
+    prompt: "The realm `warehouse` exists. You add a client to the `KeycloakRealmImport` for `warehouse` and apply it again. What happens to the realm?"
+    options:
+      - id: a
+        text: "The new client is added and the other clients stay."
+        explanation: "Not correct. The import never merges changes into an existing realm."
+      - id: b
+        text: "The realm is deleted and created again with the new client."
+        explanation: "Not correct. An import never deletes a realm."
+      - id: c
+        text: "The Job fails and the `Keycloak` resource turns `Ready=False`."
+        explanation: "Not correct. The import leaves the realm alone and the Keycloak resource is not affected."
+      - id: d
+        text: "Nothing. An import only creates a realm that does not exist yet."
+        explanation: "Correct. It never updates or deletes an existing realm."
+    correct_option: d
+    explanation: "Correct. It never updates or deletes an existing realm."
+
+  - id: ats093-final-q04
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Explain why sessions survive a full restart"
+    source_readings:
+      - sections/section-020/module-01/course-01-the-database-is-the-source-of-truth.md
+    prompt: "All Keycloak pods are deleted and then start again. Why can alice still use her refresh token?"
+    options:
+      - id: a
+        text: "The refresh token is valid forever and needs no session."
+        explanation: "Not correct. Keycloak accepts a refresh token only while the session exists."
+      - id: b
+        text: "The StatefulSet keeps the memory of the deleted pods."
+        explanation: "Not correct. The memory of a deleted pod is gone."
+      - id: c
+        text: "Her session is stored in PostgreSQL, and Keycloak reads it back."
+        explanation: "Correct. Persistent user sessions live in the database."
+      - id: d
+        text: "The tester pod stores the session for Keycloak."
+        explanation: "Not correct. The tester pod is only a client."
+    correct_option: c
+    explanation: "Correct. Persistent user sessions live in the database."
+
+  - id: ats093-final-q05
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Choose the network policy setting for clustering"
+    source_readings:
+      - sections/section-020/module-01/course-02-infinispan-caches-and-discovery.md
+    prompt: "Clustering ports 7800 and 57800 are closed to other pods. What should you do with `spec.networkPolicy.enabled`?"
+    options:
+      - id: a
+        text: "Set it to `false` so the pods can reach each other."
+        explanation: "Not correct. That opens the ports to every pod and does not help clustering."
+      - id: b
+        text: "Leave it `true`; the policy already lets the Keycloak pods reach each other."
+        explanation: "Correct. Switching it off only opens the ports to every pod."
+      - id: c
+        text: "Set it to `false` only for the second instance."
+        explanation: "Not correct. The setting applies to the whole resource."
+      - id: d
+        text: "Delete the Service `keycloak-discovery`."
+        explanation: "Not correct. That removes the discovery address and breaks more."
+    correct_option: b
+    explanation: "Correct. Switching it off only opens the ports to every pod."
+
+  - id: ats093-final-q06
+    type: single_choice
+    difficulty: advanced
+    learning_objective: "Diagnose a two-pod deployment that is not a cluster"
+    source_readings:
+      - sections/section-020/module-01/course-02-infinispan-caches-and-discovery.md
+    prompt: "A client changed in the console on one pod keeps old settings on the other. Both pods report `vendor_cluster_size` 1. What is the likely cause?"
+    options:
+      - id: a
+        text: "An `additionalOptions` entry sets `cache` to `local`."
+        explanation: "Correct. Each pod then runs alone and no invalidation messages cross."
+      - id: b
+        text: "The database is down, so the pods cannot save the client."
+        explanation: "Not correct. A database outage would make the console fail, not show old settings."
+      - id: c
+        text: "`health-enabled` is set to `true`."
+        explanation: "Not correct. That option only enables health endpoints."
+      - id: d
+        text: "The Service `keycloak-service` has no endpoints."
+        explanation: "Not correct. Clients would then get no answer at all."
+    correct_option: a
+    explanation: "Correct. Each pod then runs alone and no invalidation messages cross."
+
+  - id: ats093-final-q07
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Explain what the hostname setting does"
+    source_readings:
+      - sections/section-030/module-01/course-01-tls-termination-and-proxy-headers.md
+    prompt: "What does `spec.hostname.hostname` set when it holds a full URL?"
+    options:
+      - id: a
+        text: "The address that nginx listens on."
+        explanation: "Not correct. nginx has its own configuration."
+      - id: b
+        text: "The name of the Kubernetes Service for Keycloak."
+        explanation: "Not correct. The Service name comes from the resource name."
+      - id: c
+        text: "The host of the PostgreSQL database."
+        explanation: "Not correct. That is `spec.db.host`."
+      - id: d
+        text: "The public address that Keycloak writes into tokens, redirects and discovery documents."
+        explanation: "Correct. It fixes the scheme, host and port."
+    correct_option: d
+    explanation: "Correct. It fixes the scheme, host and port."
+
+  - id: ats093-final-q08
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Keep administrators able to reach the console"
+    source_readings:
+      - sections/section-030/module-01/course-02-what-to-expose.md
+    prompt: "The proxy answers `403` for `/admin/`. How do administrators reach the console in the playground?"
+    options:
+      - id: a
+        text: "Through nginx with a special header."
+        explanation: "Not correct. nginx blocks `/admin/` for everyone."
+      - id: b
+        text: "By setting `permanentLockout` to `true`."
+        explanation: "Not correct. That is a brute force setting, not an access path."
+      - id: c
+        text: "Through a port-forward to `keycloak-service`, at the address set in `hostname.admin`."
+        explanation: "Correct. Only someone with cluster access can open it."
+      - id: d
+        text: "By proxying port 9000 as well."
+        explanation: "Not correct. The management port is never proxied."
+    correct_option: c
+    explanation: "Correct. Only someone with cluster access can open it."
+
+  - id: ats093-final-q09
+    type: single_choice
+    difficulty: advanced
+    learning_objective: "Explain why both brute force detection and a rate limit are needed"
+    source_readings:
+      - sections/section-030/module-01/course-03-brute-force-and-rate-limiting.md
+    prompt: "An attacker tries one password each for thousands of different users. Which defence stops this?"
+    options:
+      - id: a
+        text: "Brute force detection with a lower `failureFactor`."
+        explanation: "Not correct. Each user stays below the count."
+      - id: b
+        text: "A rate limit per client address at the proxy."
+        explanation: "Correct. Brute force detection counts failures for one user at a time."
+      - id: c
+        text: "A permanent lockout for every user."
+        explanation: "Not correct. Each user fails only once, so none is locked."
+      - id: d
+        text: "Hiding the `master` realm."
+        explanation: "Not correct. The attack targets another realm."
+    correct_option: b
+    explanation: "Correct. Brute force detection counts failures for one user at a time."
+
+  - id: ats093-final-q10
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Say why a realm export is not a backup"
+    source_readings:
+      - sections/section-040/module-01/course-01-what-to-back-up.md
+    prompt: "Why is the partial realm export from the Admin Console not a backup?"
+    options:
+      - id: a
+        text: "It leaves out the users and replaces every secret with `*` characters."
+        explanation: "Correct. It is configuration, not data."
+      - id: b
+        text: "It is encrypted and cannot be read again."
+        explanation: "Not correct. It is plain JSON."
+      - id: c
+        text: "It includes sessions but not realm settings."
+        explanation: "Not correct. It includes settings and no sessions."
+      - id: d
+        text: "It can only be taken when Keycloak is stopped."
+        explanation: "Not correct. The Admin Console export works on a running server."
+    correct_option: a
+    explanation: "Correct. It is configuration, not data."
+
+  - id: ats093-final-q11
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Restore next to the damaged database"
+    source_readings:
+      - sections/section-040/module-01/course-02-dump-and-restore-the-database.md
+    prompt: "Why restore into a new database instead of over the damaged one?"
+    options:
+      - id: a
+        text: "`pg_restore` cannot write into an existing database."
+        explanation: "Not correct. It can; restoring beside it is a safety choice."
+      - id: b
+        text: "A new database restores faster."
+        explanation: "Not correct. Speed is not the reason."
+      - id: c
+        text: "Keycloak requires a new database name after each backup."
+        explanation: "Not correct. Keycloak has no such rule."
+      - id: d
+        text: "The damaged database stays available to compare, copy newer data from, or go back to."
+        explanation: "Correct. A restore over it leaves nothing to go back to."
+    correct_option: d
+    explanation: "Correct. A restore over it leaves nothing to go back to."
+
+  - id: ats093-final-q12
+    type: single_choice
+    difficulty: advanced
+    learning_objective: "Explain why a backup comes before an upgrade"
+    source_readings:
+      - sections/section-040/module-01/course-03-upgrading-with-the-operator.md
+    prompt: "A new Keycloak version started and changed the database schema. Why is putting the old image back not enough?"
+    options:
+      - id: a
+        text: "Kubernetes caches the new image and keeps using it."
+        explanation: "Not correct. The image reference decides which image runs."
+      - id: b
+        text: "The operator refuses to run an older image."
+        explanation: "Not correct. The operator accepts it; the database is the problem."
+      - id: c
+        text: "The old version cannot read the new schema, so you also need the database from before the upgrade."
+        explanation: "Correct. That is why a dump comes before every upgrade."
+      - id: d
+        text: "The old image needs a new `hostname` setting."
+        explanation: "Not correct. The hostname is not affected by an upgrade."
+    correct_option: c
+    explanation: "Correct. That is why a dump comes before every upgrade."
+

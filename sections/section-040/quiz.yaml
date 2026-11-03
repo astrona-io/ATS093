@@ -1,0 +1,246 @@
+# Knowledge check for section 040. Listed in astrona.yaml as a `type: quiz` entry after the capstone lab.
+schema_version: 1
+kind: question_bank
+id: ats093-040
+course_id: ATS093
+exam_code: KEYCLOAK
+status: draft
+provenance: Original practice material written for this course; not official exam questions.
+scope:
+  type: section
+  id: section-040
+  title: "Backup, Restore And Upgrades"
+placement:
+  position: after
+  reading: sections/section-040/capstone/labs/lab-01/question.md
+questions:
+  - id: ats093-040-q01
+    type: single_choice
+    difficulty: beginner
+    learning_objective: "Name the three parts of a Keycloak backup"
+    source_readings:
+      - sections/section-040/module-01/course-01-what-to-back-up.md
+    prompt: "Which three things make up a Keycloak backup?"
+    options:
+      - id: a
+        text: "The database, the pod logs and the container image."
+        explanation: "Not correct. Logs and the image are not Keycloak state."
+      - id: b
+        text: "The realm export, the StatefulSet and the operator Deployment."
+        explanation: "Not correct. The operator owns the StatefulSet and recreates it."
+      - id: c
+        text: "The Services, the Ingress and the NetworkPolicy."
+        explanation: "Not correct. The operator creates these again."
+      - id: d
+        text: "The database, the Kubernetes resources and the Secrets they point at."
+        explanation: "Correct. Each has its own backup method."
+    correct_option: d
+    explanation: "Correct. Each has its own backup method."
+
+  - id: ats093-040-q02
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Say why a realm export is not a backup"
+    source_readings:
+      - sections/section-040/module-01/course-01-what-to-back-up.md
+    prompt: "Why is the partial realm export from the Admin Console not a backup?"
+    options:
+      - id: a
+        text: "It is encrypted and cannot be read again."
+        explanation: "Not correct. It is plain JSON."
+      - id: b
+        text: "It leaves out the users and replaces every secret with `*` characters."
+        explanation: "Correct. It is configuration, not data."
+      - id: c
+        text: "It includes sessions but not realm settings."
+        explanation: "Not correct. It includes settings and no sessions."
+      - id: d
+        text: "It can only be taken when Keycloak is stopped."
+        explanation: "Not correct. The Admin Console export works on a running server."
+    correct_option: b
+    explanation: "Correct. It is configuration, not data."
+
+  - id: ats093-040-q03
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Save resources correctly"
+    source_readings:
+      - sections/section-040/module-01/course-01-what-to-back-up.md
+    prompt: "Which fields of a `Keycloak` resource do you need in a saved copy for a restore?"
+    options:
+      - id: a
+        text: "`metadata.name`, `metadata.namespace` and `spec`."
+        explanation: "Correct. The operator creates the rest again."
+      - id: b
+        text: "The whole object including `status`."
+        explanation: "Not correct. Applying a saved `status` does nothing."
+      - id: c
+        text: "Only `status`."
+        explanation: "Not correct. The `status` is written by the operator."
+      - id: d
+        text: "Only `spec.db`."
+        explanation: "Not correct. The rest of the `spec` is needed too."
+    correct_option: a
+    explanation: "Correct. The operator creates the rest again."
+
+  - id: ats093-040-q04
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Store the database Secret safely"
+    source_readings:
+      - sections/section-040/module-01/course-01-what-to-back-up.md
+    prompt: "Where should the Secret `keycloak-db` be backed up?"
+    options:
+      - id: a
+        text: "In Git as plain text, next to the resources."
+        explanation: "Not correct. Everyone with Git access could read the password."
+      - id: b
+        text: "Nowhere, because the operator recreates it."
+        explanation: "Not correct. The operator does not create `keycloak-db`."
+      - id: c
+        text: "In a secret store, or encrypted before it goes into Git."
+        explanation: "Correct. Never put it in Git as plain text."
+      - id: d
+        text: "In the realm export of `master`."
+        explanation: "Not correct. A realm export does not hold Kubernetes Secrets."
+    correct_option: c
+    explanation: "Correct. Never put it in Git as plain text."
+
+  - id: ats093-040-q05
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Use pg_dump for a running Keycloak"
+    source_readings:
+      - sections/section-040/module-01/course-02-dump-and-restore-the-database.md
+    prompt: "Can you run `pg_dump -Fc` while Keycloak is running?"
+    options:
+      - id: a
+        text: "No. Keycloak must be scaled to zero first."
+        explanation: "Not correct. A consistent snapshot needs no stop."
+      - id: b
+        text: "Yes. `pg_dump` reads a consistent snapshot, so the dump shows the state at the moment it started."
+        explanation: "Correct. Keycloak can keep running."
+      - id: c
+        text: "Yes, but only if sessions are switched off."
+        explanation: "Not correct. Sessions do not affect the dump."
+      - id: d
+        text: "No. The dump works only on a stopped database."
+        explanation: "Not correct. PostgreSQL can dump while running."
+    correct_option: b
+    explanation: "Correct. Keycloak can keep running."
+
+  - id: ats093-040-q06
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Keep the dump off the pod"
+    source_readings:
+      - sections/section-040/module-01/course-02-dump-and-restore-the-database.md
+    prompt: "Why copy `/backup/keycloak.dump` out of the `postgres` pod?"
+    options:
+      - id: a
+        text: "The pod deletes files older than one hour."
+        explanation: "Not correct. Nothing deletes the file on a schedule."
+      - id: b
+        text: "`pg_restore` can read only files outside the cluster."
+        explanation: "Not correct. It can read the file in the pod."
+      - id: c
+        text: "Keycloak reads the dump from your machine."
+        explanation: "Not correct. Keycloak reads the database, not a dump file."
+      - id: d
+        text: "A dump that stays in the pod is lost with the pod."
+        explanation: "Correct. Copy it to object storage or a backup system."
+    correct_option: d
+    explanation: "Correct. Copy it to object storage or a backup system."
+
+  - id: ats093-040-q07
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Restore next to the damaged database"
+    source_readings:
+      - sections/section-040/module-01/course-02-dump-and-restore-the-database.md
+    prompt: "Why restore into a new database instead of over the damaged one?"
+    options:
+      - id: a
+        text: "`pg_restore` cannot write into an existing database."
+        explanation: "Not correct. It can; restoring beside it is a safety choice."
+      - id: b
+        text: "A new database restores faster."
+        explanation: "Not correct. Speed is not the reason."
+      - id: c
+        text: "The damaged database stays available to compare, copy newer data from, or go back to."
+        explanation: "Correct. A restore over it leaves nothing to go back to."
+      - id: d
+        text: "Keycloak requires a new database name after each backup."
+        explanation: "Not correct. Keycloak has no such rule."
+    correct_option: c
+    explanation: "Correct. A restore over it leaves nothing to go back to."
+
+  - id: ats093-040-q08
+    type: single_choice
+    difficulty: beginner
+    learning_objective: "Point Keycloak at the restored database"
+    source_readings:
+      - sections/section-040/module-01/course-02-dump-and-restore-the-database.md
+    prompt: "Which field of the `Keycloak` resource do you change to use the restored database `keycloak_restored`?"
+    options:
+      - id: a
+        text: "`spec.db.database`"
+        explanation: "Correct. The operator restarts the instances against it."
+      - id: b
+        text: "`spec.db.vendor`"
+        explanation: "Not correct. That names the database product."
+      - id: c
+        text: "`spec.hostname.hostname`"
+        explanation: "Not correct. That is the public address."
+      - id: d
+        text: "`spec.instances`"
+        explanation: "Not correct. That is the number of pods."
+    correct_option: a
+    explanation: "Correct. The operator restarts the instances against it."
+
+  - id: ats093-040-q09
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Choose the update strategy for patch upgrades"
+    source_readings:
+      - sections/section-040/module-01/course-03-upgrading-with-the-operator.md
+    prompt: "Which `spec.update.strategy` rolls compatible changes, such as a newer patch release, pod by pod?"
+    options:
+      - id: a
+        text: "`RecreateOnImageChange`"
+        explanation: "Not correct. It stops all pods on any image change."
+      - id: b
+        text: "`Explicit` without changing `revision`"
+        explanation: "Not correct. It rolls pod by pod, but you must manage the revision yourself; it is not the automatic choice."
+      - id: c
+        text: "`Immediate`"
+        explanation: "Not correct. That is not a strategy of the operator."
+      - id: d
+        text: "`Auto`"
+        explanation: "Correct. It runs a Job that compares old and new and rolls pod by pod when they are compatible."
+    correct_option: d
+    explanation: "Correct. It runs a Job that compares old and new and rolls pod by pod when they are compatible."
+
+  - id: ats093-040-q10
+    type: single_choice
+    difficulty: advanced
+    learning_objective: "Explain why a backup comes before an upgrade"
+    source_readings:
+      - sections/section-040/module-01/course-03-upgrading-with-the-operator.md
+    prompt: "A new Keycloak version started and changed the database schema. Why is putting the old image back not enough?"
+    options:
+      - id: a
+        text: "Kubernetes caches the new image and keeps using it."
+        explanation: "Not correct. The image reference decides which image runs."
+      - id: b
+        text: "The old version cannot read the new schema, so you also need the database from before the upgrade."
+        explanation: "Correct. That is why a dump comes before every upgrade."
+      - id: c
+        text: "The operator refuses to run an older image."
+        explanation: "Not correct. The operator accepts it; the database is the problem."
+      - id: d
+        text: "The old image needs a new `hostname` setting."
+        explanation: "Not correct. The hostname is not affected by an upgrade."
+    correct_option: b
+    explanation: "Correct. That is why a dump comes before every upgrade."
+

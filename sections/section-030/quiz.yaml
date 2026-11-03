@@ -1,0 +1,246 @@
+# Knowledge check for section 030. Listed in astrona.yaml as a `type: quiz` entry after the capstone lab.
+schema_version: 1
+kind: question_bank
+id: ats093-030
+course_id: ATS093
+exam_code: KEYCLOAK
+status: draft
+provenance: Original practice material written for this course; not official exam questions.
+scope:
+  type: section
+  id: section-030
+  title: "Edge Security"
+placement:
+  position: after
+  reading: sections/section-030/capstone/labs/lab-01/question.md
+questions:
+  - id: ats093-030-q01
+    type: single_choice
+    difficulty: beginner
+    learning_objective: "Name the three TLS modes"
+    source_readings:
+      - sections/section-030/module-01/course-01-tls-termination-and-proxy-headers.md
+    prompt: "In which TLS mode does the proxy end TLS and send plain HTTP to Keycloak?"
+    options:
+      - id: a
+        text: "Re-encrypt."
+        explanation: "Not correct. Re-encrypt opens a new TLS connection to Keycloak."
+      - id: b
+        text: "Passthrough."
+        explanation: "Not correct. Passthrough forwards the TLS connection untouched."
+      - id: c
+        text: "Edge termination."
+        explanation: "Correct. Keycloak needs `http-enabled=true` and `proxy-headers`."
+      - id: d
+        text: "Mutual TLS."
+        explanation: "Not correct. That is not one of the three proxy modes."
+    correct_option: c
+    explanation: "Correct. Keycloak needs `http-enabled=true` and `proxy-headers`."
+
+  - id: ats093-030-q02
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Pick the right setting for passthrough"
+    source_readings:
+      - sections/section-030/module-01/course-01-tls-termination-and-proxy-headers.md
+    prompt: "A proxy passes the TLS connection to Keycloak without reading it. Which setting do you use?"
+    options:
+      - id: a
+        text: "`proxy-protocol-enabled=true` and no `proxy-headers`."
+        explanation: "Correct. The proxy cannot add headers to a stream it does not read."
+      - id: b
+        text: "`proxy-headers=xforwarded`."
+        explanation: "Not correct. The proxy cannot add headers to an encrypted stream."
+      - id: c
+        text: "`http-enabled=true` and `proxy-headers=forwarded`."
+        explanation: "Not correct. Those settings are for edge termination."
+      - id: d
+        text: "`hostname-strict=false` only."
+        explanation: "Not correct. That does not tell Keycloak about the client connection."
+    correct_option: a
+    explanation: "Correct. The proxy cannot add headers to a stream it does not read."
+
+  - id: ats093-030-q03
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Explain what the hostname setting does"
+    source_readings:
+      - sections/section-030/module-01/course-01-tls-termination-and-proxy-headers.md
+    prompt: "What does `spec.hostname.hostname` set when it holds a full URL?"
+    options:
+      - id: a
+        text: "The address that nginx listens on."
+        explanation: "Not correct. nginx has its own configuration."
+      - id: b
+        text: "The name of the Kubernetes Service for Keycloak."
+        explanation: "Not correct. The Service name comes from the resource name."
+      - id: c
+        text: "The host of the PostgreSQL database."
+        explanation: "Not correct. That is `spec.db.host`."
+      - id: d
+        text: "The public address that Keycloak writes into tokens, redirects and discovery documents."
+        explanation: "Correct. It fixes the scheme, host and port."
+    correct_option: d
+    explanation: "Correct. It fixes the scheme, host and port."
+
+  - id: ats093-030-q04
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Choose the proxy headers format"
+    source_readings:
+      - sections/section-030/module-01/course-01-tls-termination-and-proxy-headers.md
+    prompt: "nginx sends `X-Forwarded-For`, `X-Forwarded-Proto`, `X-Forwarded-Host` and `X-Forwarded-Port`. What do you set in `spec.proxy.headers`?"
+    options:
+      - id: a
+        text: "`forwarded`"
+        explanation: "Not correct. That reads the standard `Forwarded` header, which nginx does not send here."
+      - id: b
+        text: "`xforwarded`"
+        explanation: "Correct. Keycloak reads only the format you name."
+      - id: c
+        text: "`passthrough`"
+        explanation: "Not correct. That is not a value of `proxy.headers`."
+      - id: d
+        text: "`none`"
+        explanation: "Not correct. Then Keycloak ignores the headers and learns nothing about the client."
+    correct_option: b
+    explanation: "Correct. Keycloak reads only the format you name."
+
+  - id: ats093-030-q05
+    type: single_choice
+    difficulty: beginner
+    learning_objective: "Say which paths a proxy should forward"
+    source_readings:
+      - sections/section-030/module-01/course-02-what-to-expose.md
+    prompt: "Which set of path prefixes should an edge proxy forward to Keycloak?"
+    options:
+      - id: a
+        text: "`/realms/`, `/resources/` and `/.well-known/`."
+        explanation: "Correct. The public needs to sign in, not to administer."
+      - id: b
+        text: "`/`, `/admin/` and `/realms/`."
+        explanation: "Not correct. `/` and `/admin/` must not be exposed."
+      - id: c
+        text: "`/admin/`, `/metrics` and `/health`."
+        explanation: "Not correct. These are internal paths."
+      - id: d
+        text: "`/realms/master/` and `/resources/`."
+        explanation: "Not correct. The master realm must stay internal."
+    correct_option: a
+    explanation: "Correct. The public needs to sign in, not to administer."
+
+  - id: ats093-030-q06
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Block the master realm as well as the console"
+    source_readings:
+      - sections/section-030/module-01/course-02-what-to-expose.md
+    prompt: "You block `/admin/` at the proxy and nothing else. What is still exposed?"
+    options:
+      - id: a
+        text: "Nothing, because the console is the only administrative path."
+        explanation: "Not correct. The master realm's endpoints stay public."
+      - id: b
+        text: "Only the `/metrics` endpoint on port 9000."
+        explanation: "Not correct. The proxy forwards port 8080, not the management port."
+      - id: c
+        text: "The sign-in and token endpoints of the `master` realm, where administrator accounts can be attacked."
+        explanation: "Correct. Block `/realms/master/` too."
+      - id: d
+        text: "Only the static files under `/resources/`."
+        explanation: "Not correct. Those are meant to be public."
+    correct_option: c
+    explanation: "Correct. Block `/realms/master/` too."
+
+  - id: ats093-030-q07
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Keep administrators able to reach the console"
+    source_readings:
+      - sections/section-030/module-01/course-02-what-to-expose.md
+    prompt: "The proxy answers `403` for `/admin/`. How do administrators reach the console in the playground?"
+    options:
+      - id: a
+        text: "Through nginx with a special header."
+        explanation: "Not correct. nginx blocks `/admin/` for everyone."
+      - id: b
+        text: "Through a port-forward to `keycloak-service`, at the address set in `hostname.admin`."
+        explanation: "Correct. Only someone with cluster access can open it."
+      - id: c
+        text: "By setting `permanentLockout` to `true`."
+        explanation: "Not correct. That is a brute force setting, not an access path."
+      - id: d
+        text: "By proxying port 9000 as well."
+        explanation: "Not correct. The management port is never proxied."
+    correct_option: b
+    explanation: "Correct. Only someone with cluster access can open it."
+
+  - id: ats093-030-q08
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Know when nginx reads its configuration"
+    source_readings:
+      - sections/section-030/module-01/course-02-what-to-expose.md
+    prompt: "You change the ConfigMap `nginx-conf`. Why does nginx still behave the old way?"
+    options:
+      - id: a
+        text: "The ConfigMap is read only once a day."
+        explanation: "Not correct. nginx does not read on a schedule."
+      - id: b
+        text: "The `Keycloak` resource must be edited first."
+        explanation: "Not correct. nginx does not read that resource."
+      - id: c
+        text: "nginx caches the old file until Keycloak restarts."
+        explanation: "Not correct. Restarting Keycloak has no effect on nginx."
+      - id: d
+        text: "nginx reads its configuration at start, so you restart the Deployment."
+        explanation: "Correct. Run a rollout restart after each change."
+    correct_option: d
+    explanation: "Correct. Run a rollout restart after each change."
+
+  - id: ats093-030-q09
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Choose a lockout type"
+    source_readings:
+      - sections/section-030/module-01/course-03-brute-force-and-rate-limiting.md
+    prompt: "Why is a temporary lockout usually better than a permanent one?"
+    options:
+      - id: a
+        text: "A permanent lockout is slower to check."
+        explanation: "Not correct. Speed is not the reason."
+      - id: b
+        text: "A temporary lockout resets the password of the user."
+        explanation: "Not correct. A lockout never changes the password."
+      - id: c
+        text: "With a permanent lockout, anyone who knows a user name can lock that user out for good."
+        explanation: "Correct. A temporary lockout ends on its own."
+      - id: d
+        text: "A permanent lockout works only with a rate limit."
+        explanation: "Not correct. The two features are independent."
+    correct_option: c
+    explanation: "Correct. A temporary lockout ends on its own."
+
+  - id: ats093-030-q10
+    type: single_choice
+    difficulty: advanced
+    learning_objective: "Explain why both brute force detection and a rate limit are needed"
+    source_readings:
+      - sections/section-030/module-01/course-03-brute-force-and-rate-limiting.md
+    prompt: "An attacker tries one password each for thousands of different users. Which defence stops this?"
+    options:
+      - id: a
+        text: "A rate limit per client address at the proxy."
+        explanation: "Correct. Brute force detection counts failures for one user at a time."
+      - id: b
+        text: "Brute force detection with a lower `failureFactor`."
+        explanation: "Not correct. Each user stays below the count."
+      - id: c
+        text: "A permanent lockout for every user."
+        explanation: "Not correct. Each user fails only once, so none is locked."
+      - id: d
+        text: "Hiding the `master` realm."
+        explanation: "Not correct. The attack targets another realm."
+    correct_option: a
+    explanation: "Correct. Brute force detection counts failures for one user at a time."
+

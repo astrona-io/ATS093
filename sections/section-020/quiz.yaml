@@ -1,0 +1,246 @@
+# Knowledge check for section 020. Listed in astrona.yaml as a `type: quiz` entry after the capstone lab.
+schema_version: 1
+kind: question_bank
+id: ats093-020
+course_id: ATS093
+exam_code: KEYCLOAK
+status: draft
+provenance: Original practice material written for this course; not official exam questions.
+scope:
+  type: section
+  id: section-020
+  title: "Databases And Clustering"
+placement:
+  position: after
+  reading: sections/section-020/capstone/labs/lab-01/question.md
+questions:
+  - id: ats093-020-q01
+    type: single_choice
+    difficulty: beginner
+    learning_objective: "List what Keycloak keeps in the database"
+    source_readings:
+      - sections/section-020/module-01/course-01-the-database-is-the-source-of-truth.md
+    prompt: "Which data does Keycloak 26 write to PostgreSQL by default?"
+    options:
+      - id: a
+        text: "Only realms and clients; users live in the pod."
+        explanation: "Not correct. Users and password hashes are in the database."
+      - id: b
+        text: "Realms, clients, users and their password hashes, signing keys and user sessions."
+        explanation: "Correct. Persistent user sessions are on by default in Keycloak 26."
+      - id: c
+        text: "Only users; realm settings live in the `Keycloak` resource."
+        explanation: "Not correct. Realm settings are stored in the database too."
+      - id: d
+        text: "Everything except user sessions, which are never stored."
+        explanation: "Not correct. Since Keycloak 26 sessions are stored as well."
+    correct_option: b
+    explanation: "Correct. Persistent user sessions are on by default in Keycloak 26."
+
+  - id: ats093-020-q02
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Explain why sessions survive a full restart"
+    source_readings:
+      - sections/section-020/module-01/course-01-the-database-is-the-source-of-truth.md
+    prompt: "All Keycloak pods are deleted and then start again. Why can alice still use her refresh token?"
+    options:
+      - id: a
+        text: "The refresh token is valid forever and needs no session."
+        explanation: "Not correct. Keycloak accepts a refresh token only while the session exists."
+      - id: b
+        text: "The StatefulSet keeps the memory of the deleted pods."
+        explanation: "Not correct. The memory of a deleted pod is gone."
+      - id: c
+        text: "The tester pod stores the session for Keycloak."
+        explanation: "Not correct. The tester pod is only a client."
+      - id: d
+        text: "Her session is stored in PostgreSQL, and Keycloak reads it back."
+        explanation: "Correct. Persistent user sessions live in the database."
+    correct_option: d
+    explanation: "Correct. Persistent user sessions live in the database."
+
+  - id: ats093-020-q03
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Size the database for several instances"
+    source_readings:
+      - sections/section-020/module-01/course-01-the-database-is-the-source-of-truth.md
+    prompt: "Each Keycloak instance opens its own connection pool. What follows for the database?"
+    options:
+      - id: a
+        text: "The instances share one pool, so the number of instances does not matter."
+        explanation: "Not correct. Every instance opens its own pool."
+      - id: b
+        text: "Only the first instance connects; the others wait."
+        explanation: "Not correct. Every instance connects."
+      - id: c
+        text: "The maximum number of connections is `poolMaxSize` multiplied by the number of instances."
+        explanation: "Correct. Size the database for all instances together."
+      - id: d
+        text: "The operator limits the total to the `instances` value."
+        explanation: "Not correct. The operator does not cap the total number of connections."
+    correct_option: c
+    explanation: "Correct. Size the database for all instances together."
+
+  - id: ats093-020-q04
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Avoid writing to Keycloak tables directly"
+    source_readings:
+      - sections/section-020/module-01/course-01-the-database-is-the-source-of-truth.md
+    prompt: "Why should you not change Keycloak tables with SQL?"
+    options:
+      - id: a
+        text: "The pods keep cached copies and never see the change."
+        explanation: "Correct. Use the Admin REST API, `kcadm.sh` or the console instead."
+      - id: b
+        text: "PostgreSQL does not allow a second user to write to them."
+        explanation: "Not correct. The database allows it; the problem is the caches."
+      - id: c
+        text: "Keycloak rebuilds all tables at every start."
+        explanation: "Not correct. Keycloak keeps its tables between starts."
+      - id: d
+        text: "The tables are read-only for the user `keycloak`."
+        explanation: "Not correct. The user can write; that is not the reason."
+    correct_option: a
+    explanation: "Correct. Use the Admin REST API, `kcadm.sh` or the console instead."
+
+  - id: ats093-020-q05
+    type: single_choice
+    difficulty: beginner
+    learning_objective: "Tell the three cache kinds apart"
+    source_readings:
+      - sections/section-020/module-01/course-02-infinispan-caches-and-discovery.md
+    prompt: "Which Keycloak cache is replicated, so every pod holds a copy of its entries?"
+    options:
+      - id: a
+        text: "The `realms` cache."
+        explanation: "Not correct. `realms` is a local cache."
+      - id: b
+        text: "The `sessions` cache."
+        explanation: "Not correct. `sessions` is distributed, held on a set number of owners."
+      - id: c
+        text: "The `loginFailures` cache."
+        explanation: "Not correct. `loginFailures` is distributed."
+      - id: d
+        text: "The `work` cache, which carries invalidation messages."
+        explanation: "Correct. It tells the other pods that their local copy is stale."
+    correct_option: d
+    explanation: "Correct. It tells the other pods that their local copy is stale."
+
+  - id: ats093-020-q06
+    type: single_choice
+    difficulty: beginner
+    learning_objective: "Name the default cache mode in production"
+    source_readings:
+      - sections/section-020/module-01/course-02-infinispan-caches-and-discovery.md
+    prompt: "Which value of the `cache` option gives each pod private caches and no cluster?"
+    options:
+      - id: a
+        text: "`ispn`"
+        explanation: "Not correct. `ispn` is the clustered mode that the operator uses."
+      - id: b
+        text: "`local`"
+        explanation: "Correct. It is the default only in development mode."
+      - id: c
+        text: "`jdbc-ping`"
+        explanation: "Not correct. That is a cache stack for discovery, not a cache mode."
+      - id: d
+        text: "`distributed`"
+        explanation: "Not correct. That is not a value of the `cache` option."
+    correct_option: b
+    explanation: "Correct. It is the default only in development mode."
+
+  - id: ats093-020-q07
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Explain jdbc-ping discovery"
+    source_readings:
+      - sections/section-020/module-01/course-02-infinispan-caches-and-discovery.md
+    prompt: "How does the default `jdbc-ping` stack let Keycloak pods find each other?"
+    options:
+      - id: a
+        text: "Each instance writes its address into a table in the Keycloak database and reads the others from there."
+        explanation: "Correct. No extra Service or cloud API is needed."
+      - id: b
+        text: "The operator sends every pod the list of all pod IP addresses."
+        explanation: "Not correct. The pods find each other themselves through the database."
+      - id: c
+        text: "Each pod broadcasts its address to the whole node network."
+        explanation: "Not correct. Discovery uses the shared database."
+      - id: d
+        text: "The pods read the names from the `keycloak-discovery` Service logs."
+        explanation: "Not correct. Discovery reads database rows, not logs."
+    correct_option: a
+    explanation: "Correct. No extra Service or cloud API is needed."
+
+  - id: ats093-020-q08
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Choose the network policy setting for clustering"
+    source_readings:
+      - sections/section-020/module-01/course-02-infinispan-caches-and-discovery.md
+    prompt: "Clustering ports 7800 and 57800 are closed to other pods. What should you do with `spec.networkPolicy.enabled`?"
+    options:
+      - id: a
+        text: "Set it to `false` so the pods can reach each other."
+        explanation: "Not correct. That opens the ports to every pod and does not help clustering."
+      - id: b
+        text: "Set it to `false` only for the second instance."
+        explanation: "Not correct. The setting applies to the whole resource."
+      - id: c
+        text: "Leave it `true`; the policy already lets the Keycloak pods reach each other."
+        explanation: "Correct. Switching it off only opens the ports to every pod."
+      - id: d
+        text: "Delete the Service `keycloak-discovery`."
+        explanation: "Not correct. That removes the discovery address and breaks more."
+    correct_option: c
+    explanation: "Correct. Switching it off only opens the ports to every pod."
+
+  - id: ats093-020-q09
+    type: single_choice
+    difficulty: advanced
+    learning_objective: "Find the best proof of a cluster"
+    source_readings:
+      - sections/section-020/module-01/course-02-infinispan-caches-and-discovery.md
+    prompt: "Two pods are `Running` and ready. What is the most reliable proof that they form one cluster?"
+    options:
+      - id: a
+        text: "`kubectl get pods` shows two pods as `Ready`."
+        explanation: "Not correct. Two ready pods can be two separate servers."
+      - id: b
+        text: "The metric `vendor_cluster_size` equals the number of instances on every pod."
+        explanation: "Correct. A pod that runs alone reports 1."
+      - id: c
+        text: "A token from one pod is accepted by the other."
+        explanation: "Not correct. Sessions and keys come from the database, so this works without a cluster."
+      - id: d
+        text: "The `Keycloak` resource reports `Ready=True`."
+        explanation: "Not correct. It reports readiness, not membership."
+    correct_option: b
+    explanation: "Correct. A pod that runs alone reports 1."
+
+  - id: ats093-020-q10
+    type: single_choice
+    difficulty: advanced
+    learning_objective: "Diagnose a two-pod deployment that is not a cluster"
+    source_readings:
+      - sections/section-020/module-01/course-02-infinispan-caches-and-discovery.md
+    prompt: "A client changed in the console on one pod keeps old settings on the other. Both pods report `vendor_cluster_size` 1. What is the likely cause?"
+    options:
+      - id: a
+        text: "The database is down, so the pods cannot save the client."
+        explanation: "Not correct. A database outage would make the console fail, not show old settings."
+      - id: b
+        text: "`health-enabled` is set to `true`."
+        explanation: "Not correct. That option only enables health endpoints."
+      - id: c
+        text: "The Service `keycloak-service` has no endpoints."
+        explanation: "Not correct. Clients would then get no answer at all."
+      - id: d
+        text: "An `additionalOptions` entry sets `cache` to `local`."
+        explanation: "Correct. Each pod then runs alone and no invalidation messages cross."
+    correct_option: d
+    explanation: "Correct. Each pod then runs alone and no invalidation messages cross."
+

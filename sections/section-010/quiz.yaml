@@ -1,0 +1,246 @@
+# Knowledge check for section 010. Listed in astrona.yaml as a `type: quiz` entry after the capstone lab.
+schema_version: 1
+kind: question_bank
+id: ats093-010
+course_id: ATS093
+exam_code: KEYCLOAK
+status: draft
+provenance: Original practice material written for this course; not official exam questions.
+scope:
+  type: section
+  id: section-010
+  title: "Running Keycloak With The Keycloak Operator"
+placement:
+  position: after
+  reading: sections/section-010/capstone/labs/lab-01/question.md
+questions:
+  - id: ats093-010-q01
+    type: single_choice
+    difficulty: beginner
+    learning_objective: "Describe what the Keycloak Operator is"
+    source_readings:
+      - sections/section-010/module-01/course-01-what-the-operator-manages.md
+    prompt: "What is the Keycloak Operator?"
+    options:
+      - id: a
+        text: "A controller that watches Keycloak custom resources and changes the cluster until it matches them."
+        explanation: "Correct. The operator is a controller that reconciles objects to match the resources."
+      - id: b
+        text: "A command-line tool that installs Keycloak once and then exits."
+        explanation: "Not correct. The operator keeps running as a Deployment and keeps reconciling."
+      - id: c
+        text: "A Keycloak realm that stores the settings of other realms."
+        explanation: "Not correct. A realm is Keycloak data, not a controller."
+      - id: d
+        text: "A sidecar container inside every Keycloak pod."
+        explanation: "Not correct. The operator runs as its own Deployment, not as a sidecar."
+    correct_option: a
+    explanation: "Correct. The operator is a controller that reconciles objects to match the resources."
+
+  - id: ats093-010-q02
+    type: single_choice
+    difficulty: beginner
+    learning_objective: "State which namespace the operator watches"
+    source_readings:
+      - sections/section-010/module-01/course-01-what-the-operator-manages.md
+    prompt: "The default operator install runs in the namespace `keycloak`. What happens to a `Keycloak` resource applied in another namespace?"
+    options:
+      - id: a
+        text: "The operator creates a copy of it in the namespace `keycloak`."
+        explanation: "Not correct. The operator never copies resources between namespaces."
+      - id: b
+        text: "The API server refuses the resource with a validation error."
+        explanation: "Not correct. The resource is valid, so the API server accepts it."
+      - id: c
+        text: "The API server accepts it and the operator ignores it, with no error."
+        explanation: "Correct. The default install watches only its own namespace."
+      - id: d
+        text: "The operator creates the StatefulSet in the other namespace."
+        explanation: "Not correct. It does not watch that namespace, so it creates nothing."
+    correct_option: c
+    explanation: "Correct. The default install watches only its own namespace."
+
+  - id: ats093-010-q03
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Explain why manual edits to operator-owned objects do not last"
+    source_readings:
+      - sections/section-010/module-01/course-01-what-the-operator-manages.md
+    prompt: "You run `kubectl scale statefulset keycloak --replicas=2` while the `Keycloak` resource says `instances: 1`. What happens after a short time?"
+    options:
+      - id: a
+        text: "The `instances` field in the `Keycloak` resource changes to 2."
+        explanation: "Not correct. The operator never writes back into the resource spec."
+      - id: b
+        text: "The operator reconciles the StatefulSet back to one replica."
+        explanation: "Correct. The operator owns the StatefulSet and restores it to match the resource."
+      - id: c
+        text: "The StatefulSet keeps two replicas and the operator reports an error."
+        explanation: "Not correct. The operator changes the object back instead of reporting an error."
+      - id: d
+        text: "The operator is deleted because it lost control of the StatefulSet."
+        explanation: "Not correct. Nothing deletes the operator."
+    correct_option: b
+    explanation: "Correct. The operator owns the StatefulSet and restores it to match the resource."
+
+  - id: ats093-010-q04
+    type: single_choice
+    difficulty: beginner
+    learning_objective: "Name the Service clients use to reach Keycloak"
+    source_readings:
+      - sections/section-010/module-01/course-01-what-the-operator-manages.md
+    prompt: "For a `Keycloak` resource named `keycloak`, which Service do clients use to reach the server?"
+    options:
+      - id: a
+        text: "`keycloak-discovery`, on port 8080."
+        explanation: "Not correct. That headless Service lets the instances find each other."
+      - id: b
+        text: "`keycloak-initial-admin`, on port 8080."
+        explanation: "Not correct. That is a Secret, not a Service."
+      - id: c
+        text: "`keycloak-operator`, on port 8080."
+        explanation: "Not correct. That is the operator Deployment, not a client address."
+      - id: d
+        text: "`keycloak-service`, the name of the resource plus `-service`."
+        explanation: "Correct. The operator names the client Service after the resource."
+    correct_option: d
+    explanation: "Correct. The operator names the client Service after the resource."
+
+  - id: ats093-010-q05
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Read the status conditions of a Keycloak resource"
+    source_readings:
+      - sections/section-010/module-01/course-02-the-keycloak-custom-resource.md
+    prompt: "A `Keycloak` resource shows `Ready=False`. What is the right next step?"
+    options:
+      - id: a
+        text: "Delete the `Keycloak` resource and apply it again."
+        explanation: "Not correct. That removes the evidence and does not find the cause."
+      - id: b
+        text: "Edit the StatefulSet to raise the replica count."
+        explanation: "Not correct. The operator reverts StatefulSet edits, and replicas are not the cause."
+      - id: c
+        text: "Read the pod events and then the Keycloak log to find what is wrong."
+        explanation: "Correct. The condition says something is wrong; the events and log say what."
+      - id: d
+        text: "Wait, because `Ready=False` always fixes itself."
+        explanation: "Not correct. A pod that never became ready does not replace itself."
+    correct_option: c
+    explanation: "Correct. The condition says something is wrong; the events and log say what."
+
+  - id: ats093-010-q06
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Keep database credentials out of the Keycloak resource"
+    source_readings:
+      - sections/section-010/module-01/course-02-the-keycloak-custom-resource.md
+    prompt: "How should a `Keycloak` resource supply the database password?"
+    options:
+      - id: a
+        text: "With `db.passwordSecret`, which points at a key in a Kubernetes Secret."
+        explanation: "Correct. The resource then holds no credential in plain text."
+      - id: b
+        text: "As a `password` entry in `additionalOptions`."
+        explanation: "Not correct. It works but writes the password in plain text in the resource."
+      - id: c
+        text: "In `hostname.hostname`, after the host name."
+        explanation: "Not correct. That field holds the public address, not credentials."
+      - id: d
+        text: "In `spec.unsupported.podTemplate` as an environment variable value."
+        explanation: "Not correct. That field is unsupported and still stores the value in the resource."
+    correct_option: a
+    explanation: "Correct. The resource then holds no credential in plain text."
+
+  - id: ats093-010-q07
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Recover a pod stuck after a configuration fix"
+    source_readings:
+      - sections/section-010/module-01/course-02-the-keycloak-custom-resource.md
+    prompt: "You fixed a wrong Secret key in the `Keycloak` resource, but `keycloak-0` is still in `CreateContainerConfigError`. What do you do?"
+    options:
+      - id: a
+        text: "Scale the StatefulSet to zero and back to one by hand."
+        explanation: "Not correct. The operator reverts manual scaling."
+      - id: b
+        text: "Delete the Secret `keycloak-db` so it is created again."
+        explanation: "Not correct. That removes the database credentials."
+      - id: c
+        text: "Set `ingress.enabled` to `true`."
+        explanation: "Not correct. The Ingress setting has no effect on a container configuration error."
+      - id: d
+        text: "Delete the stuck pod so the StatefulSet creates it again from the fixed template."
+        explanation: "Correct. The StatefulSet does not replace a pod that never became ready."
+    correct_option: d
+    explanation: "Correct. The StatefulSet does not replace a pod that never became ready."
+
+  - id: ats093-010-q08
+    type: single_choice
+    difficulty: beginner
+    learning_objective: "Say where the initial administrator credentials are stored"
+    source_readings:
+      - sections/section-010/module-01/course-02-the-keycloak-custom-resource.md
+    prompt: "Where does the operator store the temporary administrator of the `master` realm?"
+    options:
+      - id: a
+        text: "In the ConfigMap `keycloak-admin`, as plain text."
+        explanation: "Not correct. The operator uses a Secret, not a ConfigMap."
+      - id: b
+        text: "In the Secret `keycloak-initial-admin`, with the keys `username` and `password`."
+        explanation: "Correct. Read both values from that Secret."
+      - id: c
+        text: "In the `Keycloak` resource, under `spec.admin`."
+        explanation: "Not correct. The resource does not hold administrator credentials."
+      - id: d
+        text: "In the operator log, printed at the first start."
+        explanation: "Not correct. The operator does not log the password."
+    correct_option: b
+    explanation: "Correct. Read both values from that Secret."
+
+  - id: ats093-010-q09
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Explain how a realm import works"
+    source_readings:
+      - sections/section-010/module-01/course-03-importing-realms.md
+    prompt: "What does the operator do when you apply a `KeycloakRealmImport`?"
+    options:
+      - id: a
+        text: "It starts a Kubernetes Job that runs Keycloak once against the database, imports the realm and stops."
+        explanation: "Correct. The Job writes the realm into the database."
+      - id: b
+        text: "It sends the realm to the running pod through the Admin REST API."
+        explanation: "Not correct. The operator uses a Job, not the Admin REST API."
+      - id: c
+        text: "It restarts all Keycloak pods with the realm as a startup argument."
+        explanation: "Not correct. The running pods are not restarted."
+      - id: d
+        text: "It copies the realm into a ConfigMap that the pod mounts."
+        explanation: "Not correct. The import writes to the database."
+    correct_option: a
+    explanation: "Correct. The Job writes the realm into the database."
+
+  - id: ats093-010-q10
+    type: single_choice
+    difficulty: advanced
+    learning_objective: "Know that an import never updates a realm"
+    source_readings:
+      - sections/section-010/module-01/course-03-importing-realms.md
+    prompt: "The realm `warehouse` exists. You add a client to the `KeycloakRealmImport` for `warehouse` and apply it again. What happens to the realm?"
+    options:
+      - id: a
+        text: "The new client is added and the other clients stay."
+        explanation: "Not correct. The import never merges changes into an existing realm."
+      - id: b
+        text: "The realm is deleted and created again with the new client."
+        explanation: "Not correct. An import never deletes a realm."
+      - id: c
+        text: "Nothing. An import only creates a realm that does not exist yet."
+        explanation: "Correct. It never updates or deletes an existing realm."
+      - id: d
+        text: "The Job fails and the `Keycloak` resource turns `Ready=False`."
+        explanation: "Not correct. The import leaves the realm alone and the Keycloak resource is not affected."
+    correct_option: c
+    explanation: "Correct. It never updates or deletes an existing realm."
+
