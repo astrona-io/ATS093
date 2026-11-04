@@ -13,7 +13,7 @@
 training:
   id: ATS093
   title: "Keycloak: Production Operations, Security & Kubernetes"
-  maturity: draft
+  maturity: alpha
   description: >
     Training material covering the Production Operations, Security &
     Kubernetes domain of the Keycloak training path: the Keycloak Operator and
