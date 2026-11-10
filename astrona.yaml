@@ -271,7 +271,7 @@ modules:
         difficulty: intermediate
         estimated_duration: 20m
         topic: caching
-        task_kind: configuration
+        task_kind: build
         tags: [infinispan, cache, sessions, additionalOptions, cluster]
         learning_goals:
           - Bound the users and sessions caches with cache-embedded max-count options
